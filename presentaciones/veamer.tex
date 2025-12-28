@@ -1,0 +1,226 @@
+\documentclass{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{beaver}
+
+% --- Paquetes Esenciales ---
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+% --- Información ---
+\title[Proyecto de Tesis]{Proyecto de Tesis de Maestría}
+\subtitle{Descubrimiento acelerado por IA de materiales 2D con Skyrmiones estables para aplicaciones espintrónicas}
+\author[Mitchell Mirano]{Mitchell Mirano Caro}
+\institute[UNMSM]{Universidad Nacional Mayor de San Marcos\\
+  {\small Maestría en Física}\\\smallskip
+  {\small Mención en Estado Sólido}
+}
+\date{\today}
+
+% --- Logo ---
+\logo{\includegraphics[height=0.8cm]{logo_universidad.png}}
+
+\begin{document}
+
+% --- Título ---
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% --- Índice ---
+\begin{frame}{Contenido}
+  \tableofcontents
+\end{frame}
+
+% ---------------------------
+\section{Motivación}
+\begin{frame}{Motivación}
+  \begin{itemize}
+    \item La búsqueda de materiales para espintrónica es lenta y costosa, lo que impulsa la necesidad de metodologías computacionales multiescala que aceleren el descubrimiento de materiales con skyrmiones estables y propiedades magnéticas topológicas deseadas.
+    \item La Inteligencia Artificial puede ser una herramienta poderosa para abordar este desafío, gracias a su capacidad para analizar grandes cantidades de datos y extraer patrones complejos.
+    \item Mi enfoque se centra en aplicar algoritmos de aprendizaje automático avanzados, como Vision Transformers, para la clasificación automática de fases magnéticas topológicas y la predicción de propiedades magnéticas.
+    \item La realización de esta tesis tiene como objetivo fusionar mis habilidades en ciencia de datos con la física de materiales, a fin de contribuir a la comprensión fundamental de las texturas magnéticas topológicas y optimizar la identificación de nuevos compuestos para aplicaciones espintrónicas.
+  \end{itemize}
+\end{frame}
+
+% ---------------------------
+\section{Marco Conceptual}
+
+\begin{frame}{Marco Conceptual I: Interacciones Magnéticas}
+  \begin{itemize}
+    \item \textbf{DFT (Teoría del Funcional de la Densidad):} Permite derivar \( J \), \( \vec{D} \), \( K \) sin parámetros empíricos. Usa el formalismo de Liechtenstein.
+    \item \textbf{Intercambio de Heisenberg (J):} Determina el tipo de orden magnético.
+    \[
+      H_J = - \sum_{\langle i,j \rangle} J_{ij} \, \vec{S}_i \cdot \vec{S}_j
+    \]
+    Si \( J_{ij} > 0 \) → ferromagnetismo, \( J_{ij} < 0 \) → antiferromagnetismo.
+
+    \item \textbf{Interacción Dzyaloshinskii–Moriya (D):} Favorece espines chirales.
+    \[
+      H_D = - \sum_{\langle i,j \rangle} \vec{D}_{ij} \cdot (\vec{S}_i \times \vec{S}_j)
+    \]
+    Surge por acoplamiento espín–órbita y ruptura de simetría de inversión.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Marco Conceptual II: Anisotropía y Hamiltoniano Total}
+  \begin{itemize}
+    \item \textbf{Anisotropía Magnetocristalina (K):} Estabiliza orientaciones preferidas del espín.
+    \[
+      H_K = - K \sum_i (\vec{S}_i \cdot \hat{n})^2
+    \]
+    Si \( K > 0 \): preferencia fuera del plano; \( K < 0 \): en el plano.
+
+    \item \textbf{Hamiltoniano completo:} Incluye todas las contribuciones magnéticas.
+    \[
+      H = H_J + H_D + H_K - \mu \sum_i \vec{B} \cdot \vec{S}_i
+    \]
+    En esta expresión, el último término representa la energía de Zeeman
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Marco Conceptual III: Modelado e Inteligencia Artificial}
+  \begin{itemize}
+    
+    \item \textbf{Simulaciones de Monte Carlo:} Exploran fases magnéticas en el espacio (B, T). Permiten observar skyrmiones, merones, bimerones, etc.
+
+    \item \textbf{Vision Transformers (ViT):} Clasifican fases magnéticas topológicas a partir de mapas de espín como imágenes.
+    \[
+      \text{Attention}(Q,K,V) = \mathrm{softmax}\left( \frac{QK^\top}{\sqrt{d_k}} \right) V
+    \]
+    Capturan patrones espaciales complejos y no locales.
+  \end{itemize}
+\end{frame}
+
+
+% ---------------------------
+\section{Justificación}
+
+\begin{frame}{3. Justificación: Relevancia Científica y Metodológica}
+  \begin{itemize}
+    \item \textbf{Científica:}
+      \begin{itemize}
+        \item Los skyrmiones son clave para memorias espintrónicas de alta densidad y bajo consumo.
+        \item Se requiere descubrir materiales 2D que los estabilicen, como los tri-haluros MCl$_3$,donde (M=V,Cr).
+        \item El dopaje permite modular helicidad, tamaño y estabilidad topológica.
+      \end{itemize}
+      
+    \item \textbf{Metodológica:}
+      \begin{itemize}
+        \item Integra DFT, simulaciones de Monte Carlo y Vision Transformers.
+        \item El uso de IA automatiza la clasificación de fases magnéticas complejas.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{3. Justificación: Impacto Institucional y Nacional}
+  \begin{itemize}
+    \item \textbf{UNMSM:}
+      \begin{itemize}
+        \item Fortalece al GMCAN y al LMSC en física computacional e IA aplicada.
+        \item Justifica inversión en infraestructura HPC(High Performance Computing).
+      \end{itemize}
+
+    \item \textbf{Perú:}
+      \begin{itemize}
+        \item Forma talento en áreas estratégicas: IA, magnetismo, simulación.
+        \item Aporta al desarrollo tecnológico nacional y reduce dependencia externa.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+
+% ---------------------------
+\section{Objetivos}
+\begin{frame}{4. Objetivos de la Investigación}
+  \textbf{Objetivo General:}
+  \begin{itemize}
+    \item Desarrollar una metodología computacional avanzada que integre DFT, simulaciones de Monte Carlo y redes Vision Transformer (ViT) para identificar y clasificar fases magnéticas topológicas (como skyrmiones) en materiales 2D MCl$_3$, puros y dopados.
+  \end{itemize}
+
+  \vspace{0.4cm}
+  \textbf{Objetivos Específicos:}
+  \begin{itemize}
+    \item Generar un conjunto de datos representativo de configuraciones de espín(B-T) a partir de simulaciones de Monte Carlo, utilizando parámetros magnéticos (J, D, K) derivados de DFT.
+    \item Diseñar y entrenar un modelo ViT para clasificar automáticamente fases magnéticas.
+    \item Correlacionar las fases predichas con propiedades físicas (helicidad, número topológico) y efectos del dopaje.
+  \end{itemize}
+\end{frame}
+
+
+% ---------------------------
+\section{Hipótesis}
+\begin{frame}{5. Hipótesis de la Investigación}
+  \begin{block}{Hipótesis Principal}
+    La integración de simulaciones de Monte Carlo, con parámetros magnéticos (J, D, K) obtenidos de cálculos DFT, junto con redes neuronales Vision Transformer (ViT) para la clasificación automática de fases magnéticas, permitirá acelerar significativamente el descubrimiento y caracterización de skyrmiones, bimerones y merones en materiales 2D tipo MCl$_3$, tanto puros como dopados.
+  \end{block}
+\end{frame}
+
+
+% ---------------------------
+\section{Metodología}
+
+\begin{frame}{6. Metodología (I): Enfoque General}
+  \begin{itemize}
+    \item \textbf{Tipo de investigación:} Básica-aplicada, con desarrollo experimental computacional(simulaciones).
+    \item \textbf{Enfoque multiescala:} Integra física del estado sólido, simulaciones y aprendizaje automático.
+    \item \textbf{Técnicas principales:}
+      \begin{itemize}
+        \item Cálculos de primeros principios (DFT/DFT+U).
+        \item Simulaciones de Monte Carlo-Metrópolis.
+        \item Clasificación automática con Vision Transformers (ViT).
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{6. Metodología (II): Etapas Principales}
+  \begin{enumerate}
+    \item \textbf{Derivación de parámetros magnéticos} (J, D, K) desde DFT mediante el formalismo de Liechtenstein.
+    \item \textbf{Construcción del Hamiltoniano clásico} con esos parámetros.
+    \item \textbf{Simulaciones de Monte Carlo} para generar configuraciones de espín y diagramas de fase (B–T).
+    \item \textbf{Generación de datos sintéticos} (mapas de espín) para entrenamiento de IA.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{6. Metodología (III): Clasificación y Validación}
+  \begin{itemize}
+    \item \textbf{Modelo Vision Transformer (ViT):}
+      \begin{itemize}
+        \item Entrenado con configuraciones de espín simuladas.
+        \item Clasifica fases magnéticas: skyrmiones, merones, espirales, etc.
+      \end{itemize}
+    \item \textbf{Evaluación del modelo:}
+      \begin{itemize}
+        \item Precisión, F1-score, matriz de confusión.
+        \item Capacidad de generalización en materiales dopados.
+      \end{itemize}
+    \item \textbf{Correlación final:}
+      \begin{itemize}
+        \item Propiedades físicas vs. predicciones IA.
+        \item Impacto del dopaje sobre helicidad, estabilidad y número topológico.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+% ---------------------------
+\begin{frame}{Instrumentos y Herramientas}
+  \begin{itemize}
+    \item \textbf{DFT:} Quantum ESPRESSO, VASP.
+    \item \textbf{Modelos de espín:} Spirit, VAMPIRE.
+    \item \textbf{Redes neuronales:} PyTorch, TensorFlow.
+    \item \textbf{Visualización y análisis:} VESTA, Matplotlib.
+  \end{itemize}
+\end{frame}
+
+\end{document}

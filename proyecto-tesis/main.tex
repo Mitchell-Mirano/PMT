@@ -1,0 +1,1359 @@
+\documentclass[12pt, a4paper]{report}
+
+% Paquetes necesarios
+\usepackage[utf8]{inputenc} % Para tildes y caracteres especiales
+\usepackage[T1]{fontenc}    % Para una codificación de fuente adecuada
+\usepackage[spanish]{babel} % Para soporte de idioma español (guiones, nombres de secciones, etc.)
+\usepackage{lmodern}
+\usepackage{tikz}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}  % Para colores en tablas
+\usepackage{tabularx}       % Para usar columnas tipo X
+\usepackage{array}          % Para mejorar formato de columnas
+\usepackage{float}        % Para usar [H] en tablas
+\usepackage{multirow}
+
+
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+
+\usepackage[colorlinks=true, linkcolor=black, citecolor=blue, urlcolor=blue]{hyperref}
+
+
+\usepackage[backend=biber, style=apa]{biblatex}
+\addbibresource{references.bib}
+
+\DefineBibliographyStrings{spanish}{
+  andothers = {y cols},
+}
+
+\usepackage{ragged2e}
+
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+
+
+\usepackage{tabularx} % Required for tabularx environment
+\usepackage{booktabs} % For professional-looking table rules (optional, but recommended)
+\usepackage{ragged2e} % For \RaggedRight to align text left in cells
+
+
+\usepackage{setspace}       % Para control de interlineado
+\usepackage{fancyhdr}       % Para encabezados y pies de página personalizados
+\usepackage{graphicx}       % Para incluir imágenes
+\usepackage{caption}        % Para personalizar el formato de las leyendas de figuras y tablas
+\usepackage{subcaption}     % Para subfiguras/subtablas si se necesitan
+\usepackage{float}          % Para mayor control sobre la colocación de flotantes
+\usepackage{tocloft}        % Para un control más fino de la Tabla de Contenidos (NEW)
+
+% --- Configuraciones generales ---
+\onehalfspacing % Interlineado genérico de 1.5
+
+% Margenes (puedes ajustarlos según sea necesario)
+\usepackage[left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+
+% Numeración de páginas en la parte superior derecha
+\pagestyle{fancy}
+\fancyhf{} % Borra los encabezados y pies de página existentes
+\fancyhead[R]{\thepage} % Número de página a la derecha en el encabezado
+\renewcommand{\headrulewidth}{0pt} % Elimina la línea en el encabezado si no es deseada
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyhead[R]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+% --- Configuraciones de formato de títulos ---
+\usepackage{titlesec}
+
+% **** CRUCIAL FIXES FOR NUMBERING AND TOC ****
+
+% 1. Redefine \thechapter to ONLY be the Roman numeral (NO PERIOD HERE)
+% This prevents the period from affecting "Contents" in the TOC.
+\renewcommand{\thechapter}{\Roman{chapter}}
+
+% 2. Explicitly define how SECTION and lower level counters are constructed.
+% They should use the ARABIC value of the chapter counter for their prefix,
+% regardless of how \thechapter is displayed for the chapter heading.
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+
+% 3. Use tocloft to add the period specifically in the TOC for chapters
+% \cftchapnumwidth: width for chapter numbers in TOC (adjust if needed)
+\setlength{\cftchapnumwidth}{2.5em} % Increase if numbers get too long (e.g., IX.)
+% \cftchapaftersnum: what comes AFTER the chapter number in the TOC (the period)
+\renewcommand{\cftchapaftersnum}{.} % Adds a period after chapter number in TOC
+\renewcommand{\cftchappresnum}{}% Remove "Chapter " prefix from TOC entries
+% \cftchapfont: font for chapter entries in TOC (optional, can be bold)
+\renewcommand{\cftchapfont}{\bfseries} % Makes chapter titles in TOC bold (optional)
+
+% **** END OF CRUCIAL FIXES ****
+
+
+% Nombre de capítulo en mayúsculas, alineado a la izquierda, tamaño 14 y negrita.
+% Aquí, añadimos el punto manualmente después de \thechapter.
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\fontsize{14}{16}\selectfont\raggedright}
+  {} % Este argumento está vacío.
+  {0pt}
+  {\hspace{-0.7cm}\thechapter.\quad} % <--- Added the period here after \thechapter
+\titlespacing*{\chapter}{0pt}{1.5\baselineskip}{1.5\baselineskip}
+
+% Nombre de subcapítulo en mayúsculas y minúsculas, alineado a la izquierda, tamaño 13 y negrita.
+\titleformat{\section}
+  {\normalfont\bfseries\fontsize{13}{15}\selectfont\raggedright}
+  {\thesection} % \thesection ya usa el número arábigo del capítulo
+  {1em}
+  {}
+\titlespacing*{\section}{0pt}{1.5\baselineskip}{1.5\baselineskip}
+
+% Nombre de acápite de capítulo en mayúsculas y minúsculas, alineado a la izquierda, tamaño 12, cursiva y negrita.
+\titleformat{\subsection}
+  {\normalfont\bfseries\itshape\fontsize{12}{14}\selectfont\raggedright}
+  {\thesubsection} % \thesubsection ya usa el número arábigo del capítulo
+  {1em}
+  {}
+\titlespacing*{\subsection}{0pt}{1.5\baselineskip}{1.5\baselineskip}
+
+% Nombre de subacápite de capítulo en mayúsculas y minúsculas, con sangría de 5 espacios, alineado a la izquierda, tamaño 12, cursiva y negrita; termina en punto y el texto inicia a continuación.
+\titleformat{\subsubsection}
+  {\normalfont\bfseries\itshape\fontsize{12}{14}\selectfont}
+  {\hspace*{5em}\thesubsubsection.} % \thesubsubsection ya usa el número arábigo del capítulo
+  {0em} % Espacio entre el número y el título (cero porque el texto empieza inmediatamente)
+  {}
+\titlespacing*{\subsubsection}{0pt}{1.5\baselineskip}{0pt} % El 0pt final para que el texto comience en la misma línea
+
+% Configuración para las leyendas de figuras y tablas
+\captionsetup[figure]{font=small,labelfont=bf,justification=RaggedRight,singlelinecheck=false,skip=6pt}
+\captionsetup[table]{font=small,labelfont=bf,justification=RaggedRight,singlelinecheck=false,skip=6pt}
+
+% Comando para siglas (coloca las siglas entre paréntesis sin puntuación)
+\newcommand{\sigla}[2]{#1 (#2)} % Uso: \sigla{Nombre Completo}{SIGLA}
+
+
+% --- Configuración de párrafos ---
+% \raggedright
+\setlength{\parindent}{0pt}
+
+
+% --- Inicio del documento ---
+\begin{document}
+
+% Página de título (ejemplo, puedes personalizarla)
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    {\Huge\bfseries PROYECTO DE TESIS DE MAESTRÍA EN FÍSICA CON MENCIÓN EN ESTADO SÓLIDO\par}
+    \vspace{2cm}
+    {\Large\bfseries Autor(es): Mitchell Mirano Caro\par}
+    \vspace{1cm}
+    {\large Institución: Universidad Nacional Mayor de San Marcos\par}
+    \vspace{1cm}
+    {\large Fecha: \today\par}
+    \vfill
+\end{titlepage}
+
+% Índice (opcional, pero común en documentos formales)
+\tableofcontents
+\newpage
+
+% --- Contenido del documento ---
+
+\chapter{Información General del Estudio}
+
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\begin{longtable}{@{}p{6cm}p{10cm}@{}}
+\toprule
+\textbf{1.1 Título del estudio} & Clasificación de fases magnéticas en trihaluros metálicos $MCl_{3}(M = V,Cr)$ con Skyrmiones estables usando una red neuronal Vision Transformer \\ \midrule
+\textbf{1.2 Responsable del estudio} & Mitchell Mirano Caro \\  \midrule
+\textbf{1.3 Asesor(es)} & Rojas Ayala Chachi \\  \midrule
+\textbf{1.4 Programa de UPG} & Maestría en Física \\  \midrule
+\textbf{1.4.1 Mención} & Estado Sólido \\  \midrule
+\textbf{1.5 Grupo de investigación} & GMCAN – Grupo de Métodos Computacionales Aplicados a Nanomateriales \\  \midrule
+\textbf{1.5.1 Línea de investigación} & Ciencia de materiales avanzados y de estructuras artificiales. \\  \midrule
+\textbf{1.5.2 Área, sub-área (OCDE)} &
+Área: \textbf{Ciencias Naturales}
+
+Sub-área:  
+1.1 Ciencias físicas (Física)  
+1.2 Ciencias e ingeniería de la computación e información  
+
+OCDE:  
+1.1.5 Física Atómica, Molecular y Química  
+1.2.1 Ciencias de la Computación  
+1.2.3 Inteligencia Artificial \\ \midrule
+\textbf{1.5.3 Códigos UNESCO} & 
+2203.11 (Ciencia de la Información Cuántica)\\
+& 1203 (Inteligencia Artificial)\\
+& 1209 (Ciencia Computacional) \\ \midrule
+\textbf{1.5.4 PACs numbers} & 
+75.70.Kw (Propiedades magnéticas de nanoestructuras)\\
+& 75.30.Ds (Interacciones de intercambio)\\
+& 75.10.Lp (Simulaciones Monte Carlo)\\
+& 07.05.Mh (Redes neuronales, lógica difusa, inteligencia artificial) \\ \midrule
+\textbf{1.6 Fecha de presentación} & \today \\
+\bottomrule
+\end{longtable}
+
+
+\section*{1.7 Resumen Ejecutivo}
+
+Este proyecto de tesis presenta una metodología computacional 
+avanzada para la caracterización 
+de materiales magnéticos bidimensionales (2D) 
+con skyrmiones estables, fundamentales para el 
+avance de tecnologías espintrónicas. El foco está en 
+tri-haluros metálicos MCl$_3$ (M = V, Cr), materiales 
+centrosimétricos en los que la estabilización de skyrmiones 
+se investiga mediante la interacción Dzyaloshinskii-Moriya, 
+originada por su estructura atómica y posibles dopajes.
+
+La estrategia integra cálculos de primeros principios 
+para obtener parámetros magnéticos esenciales: 
+intercambio de Heisenberg ($J$), interacción Dzyaloshinskii-Moriya ($D$) 
+y anisotropía magnetocristalina ($K$), 
+aplicando el formalismo de Liechtenstein. 
+Estos parámetros se usarán en simulaciones de 
+Monte Carlo que permiten explorar 
+configuraciones de espín, construir diagramas de fase 
+campo magnetico-temperatura (B--T) y modelar la aparición de texturas 
+topológicas como skyrmiones y merones.
+
+Para clasificar y caracterizar de manera eficiente 
+los diagramas de fase, se desarrollará y entrenará 
+una red neuronal Vision Transformer usando 
+los datos generados por las simulaciones. 
+Este enfoque multiescala asistido 
+por Inteligencia Artificial supera las limitaciones del análisis manual 
+y facilita el diseño racional de nuevos materiales 
+espintrónicos, incluyendo el estudio sistemático del 
+efecto de impurezas magnéticas (Fe, Mn) en la estabilidad 
+y propiedades topológicas de los skyrmiones.
+
+
+\chapter{Planteamiento del Estudio}
+
+\section{Situación problemática}
+
+
+El desarrollo tecnológico actual
+en sistemas de almacenamiento y procesamiento de información
+confronta los límites inherentes a la ley de Moore.
+Esta situación impulsa
+la exploración de nuevos paradigmas computacionales
+\parencite{Kent2008Microelectronics}. La investigación 
+en nuevos paradigmas electrónicos ha dado lugar 
+a diversas ramas innovadoras, a menudo englobadas 
+bajo el término de “nueva electrónica”. Entre estas, 
+destacan la espintrónica, la orbitrónica y 
+la magnonónica.Estas disciplinas se centran en el 
+estudio y manipulación de grados de libertad 
+inherentes a los electrones, como el espín y el 
+momento orbital, así como de fenómenos colectivos 
+como los magnones, con el fin de desarrollar 
+métodos avanzados para el transporte y procesamiento 
+de información.En este contexto, la espintrónica se posiciona 
+como un campo prometedor al explotar directamente 
+el espín del electrón como portador de información. 
+Esta aproximación facilita la creación de dispositivos 
+electrónicos con capacidades mejoradas, incluyendo 
+una mayor densidad de integración y un menor consumo 
+de energía, lo que representa un avance significativo 
+frente a la electrónica tradicional \parencite{_uti__2004}.
+
+
+En este contexto,
+los skyrmiones magnéticos han suscitado considerable interés.
+Se trata de estructuras topológicas intrínsecamente estables,
+donde los espines electrónicos se organizan
+en patrones circulares protegidos.
+Esta configuración es el resultado de la interacción
+entre el intercambio de Heisenberg,
+la interacción de Dzyaloshinskii-Moriya (DMI)
+y la anisotropía magnetocristalina.
+Los skyrmiones emergen en materiales
+que carecen de simetría de inversión
+y son susceptibles de manipulación
+mediante campos magnéticos o corrientes eléctricas
+\parencite{erickson2025effectmagneticanisotropygradientinduced}.
+
+Sin embargo,
+descubrir y diseñar materiales
+capaces de estabilizar skyrmiones
+bajo condiciones tecnológicamente relevantes
+(como temperaturas cercanas a la ambiente,
+control preciso de su helicidad
+y bajo efecto Hall topológico)
+representa un desafío significativo.
+
+En el contexto actual
+de búsqueda de nuevos materiales,
+los materiales bidimensionales (2D),
+específicamente los trihaluros metálicos
+de van der Waals (MCl$_3$, con M = V, Cr),
+emergen como candidatos prometedores.
+Estos compuestos son característicamente
+antiferromagnéticos y poseen una estructura
+centrosimétrica.
+Sin embargo,
+la estabilización de skyrmiones en ellos
+puede ser inducida mediante
+la interacción de Dzyaloshinskii-Moriya (DMI).
+Esta DMI no es intrínseca
+a la simetría global del material,
+sino que puede surgir
+de su configuración atómica local
+y ser potenciada por dopajes.
+
+La capacidad de estos materiales
+para albergar skyrmiones manipulables
+a través del dopado con impurezas magnéticas
+Fe y Mn es notable. No obstante,
+el impacto preciso de dicho dopaje
+en la aparición, estabilidad y dinámica
+de las fases magnéticas topológicas
+en estos sistemas,
+requiere una caracterización sistemática. Esta falta de comprensión representa
+un vacío en el conocimiento
+y un obstáculo para su aplicación práctica,
+lo que subraya la novedad e interés
+de esta investigación.
+
+La identificación y el diseño de materiales 2D
+con propiedades magnéticas óptimas,
+como una DMI robusta,
+anisotropía apropiada
+e interacciones de intercambio controlables,
+requieren el uso de métodos
+computacionales de alta precisión.
+Los cálculos de primeros principios
+basados en la Teoría del Funcional de la Densidad (DFT)
+son herramientas indispensables
+para derivar parámetros fundamentales como 
+intercambio de Heisenberg ($J$), interacción Dzyaloshinskii-Moriya ($D$) 
+y anisotropía magnetocristalina ($K$)
+con gran exactitud.
+No obstante,
+el elevado costo computacional
+de los métodos DFT
+limita severamente su aplicabilidad
+en estudios de cribado masivo de materiales,
+comprometiendo la viabilidad
+de exploraciones exhaustivas
+\parencite{Blundell2001}.
+La caracterización de las fases topológicas
+que emergen de estas interacciones
+requiere simulaciones de Monte Carlo
+bajo una amplia gama de condiciones
+de temperatura y campo magnético.
+Estas simulaciones, aunque esenciales,
+generan volúmenes considerables de datos
+(configuraciones de espín,
+diagramas de fase campo magnetico-temperatura (B--T))
+cuya interpretación y clasificación
+mediante enfoques tradicionales resultan ineficientes.
+
+Frente a esta problemática,
+se identifica la necesidad crítica
+de desarrollar una metodología
+computacional multiescala
+y asistida por inteligencia artificial
+que permita acelerar significativamente
+tanto la predicción de propiedades magnéticas
+como la clasificación automática
+de fases topológicas.
+Este enfoque representa
+una solución novedosa y viable
+para superar las limitaciones actuales.
+
+\section{Formulación del Problema}
+
+El problema central de esta investigación consiste en la ineficiencia
+y las limitaciones inherentes de los métodos computacionales tradicionales
+para el descubrimiento y la caracterización exhaustiva de materiales
+bidimensionales (2D) con skyrmiones estables bajo condiciones operativas
+relevantes. Este problema se manifiesta en dos aspectos fundamentales:
+
+\begin{enumerate}
+    \item La derivación de parámetros magnéticos ($J, D, K$) a partir de cálculos DFT es computacionalmente costosa,
+        lo que impide un cribado eficiente y sistemático de nuevos materiales
+        o la exploración de extensas configuraciones de dopaje en compuestos
+        como los trihaluros metálicos MCl$_3$.
+    \item La clasificación y el análisis de las complejas fases magnéticas
+        topológicas (skyrmiones, bimerones, antiskyrmiones, merones, estados
+        espirales) que emergen de las simulaciones de Monte Carlo bajo diversas
+        condiciones termodinámicas resultan ineficaces debido al gran volumen
+        y la granularidad de los datos generados. Además, la comprensión actual
+        de cómo las perturbaciones estructurales inducidas por el dopaje (con
+        impurezas magnéticas como Fe y Mn) afectan propiedades críticas como
+        la estabilidad, la helicidad y el número topológico de los skyrmiones,
+        así como su impacto en fenómenos de transporte como el efecto Hall
+        topológico, es aún incipiente y requiere un estudio sistemático.
+\end{enumerate}
+
+
+Para abordar esta problemática, la presente investigación 
+propone el desarrollo de una metodología computacional avanzada. 
+Esta integrará la derivación de parámetros magnéticos mediante 
+cálculos DFT
+utilizando el formalismo de Liechtenstein. Además, se emplearán 
+simulaciones de Monte Carlo para explorar diagramas de fase (B-T), y se desarrollarán y aplicarán técnicas de 
+Inteligencia Artificial, específicamente redes neuronales 
+tipo Vision Transformer (ViT), para la clasificación 
+automática de fases magnéticas topológicas a 
+partir de configuraciones de espín. Se realizará un estudio
+sistemático del impacto de impurezas magnéticas (Fe, Mn)
+ en las propiedades
+de estas texturas en materiales MCl$_3$ 2D, incluyendo su helicidad, 
+número topológico y su potencial para aplicaciones en espintrónica.
+
+De este modo, el aspecto que se desarrollará científicamente se centra
+en la creación y validación de una metodología computacional multiescala
+y asistida por Inteligencia Artificial(IA) que optimice la caracterización
+de materiales 2D con propiedades magnéticas topológicas deseadas, a la
+vez que profundiza en la comprensión de cómo el dopaje puede modular
+estas propiedades.
+
+
+\section{Antecedentes del Problema}
+
+
+La investigación de texturas magnéticas no colineales, como los skyrmiones, 
+ha experimentado un notable avance desde que se demostró teóricamente 
+su existencia como vórtices termodinámicamente estables en ciertos 
+cristales con orden magnético \parencite{Bogdanov_2020}.
+El trabajo seminal en este campo 
+estableció que, en presencia de un campo magnético externo, 
+la energía de interacción no homogénea 
+(específicamente, la interacción Dzyaloshinskii-Moriya o DMI) 
+puede favorecer la formación de un estado mixto de vórtices magnéticos, 
+análogo al estado mixto de los superconductores tipo II \parencite{bogdanov1989thermodynamically}. 
+Este descubrimiento sentó las bases teóricas para la búsqueda y el estudio 
+de fases topológicas en una amplia gama de materiales magnéticos.
+
+Para modelar de manera realista y predictiva estos complejos fenómenos magnéticos, 
+la comunidad científica ha adoptado un enfoque multiescala que se ha 
+consolidado como una herramienta fundamental. 
+Este enfoque integra la teoría del funcional de la densidad (DFT) 
+con simulaciones numéricas a mayor escala. La metodología consiste 
+en utilizar cálculos DFT para obtener con 
+precisión los parámetros magnéticos fundamentales de un material, 
+como las constantes de intercambio de Heisenberg ($J$), 
+los vectores Dzyaloshinskii-Moriya ($D$) y la anisotropía magnetocristalina ($K$). 
+Posteriormente, estos parámetros se emplean para construir un 
+Hamiltoniano de espín clásico, cuya dinámica y estados de equilibrio se 
+exploran mediante simulaciones de Monte Carlo \parencite{borisov2023electronic}. 
+Este procedimiento permite conectar la estructura electrónica a escala atómica 
+con el comportamiento magnético macroscópico, 
+posibilitando no solo la comprensión de materiales existentes, 
+sino también la predicción de nuevos compuestos con propiedades 
+magnéticas deseadas \parencite{borisov2023electronic}.
+
+En este contexto, los materiales bidimensionales (2D) de van der Waals, 
+y en particular los tri-haluros metálicos ($MX_3$),
+han surgido como una plataforma prometedora para la espintrónica. 
+Estudios sistemáticos basados en DFT han destacado la importancia de 
+comprender la influencia de la estructura cristalina 
+(apilamiento y grupo espacial) en las propiedades electrónicas 
+y magnéticas de compuestos como $VCl_3$ y $CrCl_3$ \parencite{dutta2023study}. 
+Recientemente, la aplicación del enfoque multiescala a estos materiales 
+ha revelado hallazgos significativos. Se ha demostrado que, 
+a pesar de su estructura cristalina centrosimétrica, 
+compuestos como $VCl_3$ y $CrCl_3$ pueden albergar 
+interacciones DMI no despreciables, originadas por la 
+ruptura de la simetría de inversión local. 
+Estas interacciones son suficientes para estabilizar skyrmiones 
+de tamaño nanométrico ($\sim$2~nm), lo cual es altamente prometedor 
+para aplicaciones en dispositivos de memoria de alta densidad 
+\parencite{tran2024skyrmions}. Notablemente, se ha predicho que los 
+skyrmiones en $VCl_3$ y $CrCl_3$ poseen helicidades opuestas, 
+lo que sugiere que el dopaje podría ser un mecanismo viable 
+para controlar esta propiedad fundamental \parencite{tran2024skyrmions}.
+
+La influencia de las impurezas y el desorden en la estabilidad de las 
+fases topológicas es un área de investigación activa y crucial 
+para el desarrollo de aplicaciones prácticas. 
+Simulaciones de Monte Carlo han explorado el efecto del 
+desorden de enlaces aleatorios, análogo a la sustitución 
+química en sitios no magnéticos. Estos estudios han encontrado que, 
+si bien un desorden moderado puede romper el orden helicoidal de largo 
+alcance, puede simultáneamente inducir la formación de fases 
+topológicas como los bimerones. Sorprendentemente, 
+las características topológicas de la red de skyrmiones 
+pueden persistir incluso con altas amplitudes de desorden, 
+y en ciertos modelos, el desorden puede incluso expandir 
+la región de estabilidad de la fase de skyrmiones \parencite{Iroulart2024}. 
+Estos resultados subrayan la robustez de las texturas topológicas y 
+la rica fenomenología que emerge en sistemas dopados.
+
+La vasta cantidad de datos generados por las simulaciones de Monte Carlo, 
+que exploran diagramas de fase en función de la temperatura y el campo magnético, 
+presenta un desafío significativo para la identificación y 
+clasificación eficiente de las distintas fases magnéticas. 
+Para abordar este cuello de botella, se han comenzado a aplicar 
+técnicas de Inteligencia Artificial. Investigaciones previas han 
+demostrado la eficacia de las Redes Neuronales Convolucionales (CNN) 
+para la identificación multi-etiqueta de diversas texturas magnéticas, 
+incluyendo antiskyrmiones, bimerones y fases helicoidales, a partir 
+de configuraciones de espín obtenidas en simulaciones \parencite{araz2022identifying}. 
+Un avance clave de este enfoque es la capacidad de la red para predecir 
+la emergencia de una fase en etapas tempranas de la simulación, acelerando 
+drásticamente la exploración del espacio de parámetros \parencite{araz2022identifying}.
+
+Más recientemente, se ha explorado el uso de arquitecturas de atención más avanzadas,
+como los Vision Transformers (ViT), para la clasificación de fases en modelos 
+de física estadística. Se ha demostrado que los modelos ViT, pre-entrenados 
+y ajustados con un número limitado de configuraciones de espín, 
+pueden superar el rendimiento de las CNN de última generación en 
+la predicción de variables de estado en simulaciones del modelo de Ising 
+\parencite{kara2021fine}. Además del aumento en la precisión, 
+los ViT ofrecen la ventaja de la interpretabilidad a través 
+de sus mapas de atención, lo que abre una vía para correlacionar 
+los patrones visuales aprendidos por el modelo con la física 
+subyacente de las transiciones de fase \parencite{kara2021fine}. 
+Este potencial convierte a los ViT en una herramienta particularmente atractiva 
+para el análisis de sistemas magnéticos complejos. 
+Finalmente, la integración de estas tecnologías en materiales 2D tiene el 
+potencial de revolucionar el hardware computacional, 
+ofreciendo un paradigma para la computación neuromórfica con un 
+consumo energético ultra-bajo, alta velocidad y escalabilidad sin precedentes, 
+abordando así los desafíos de la inteligencia artificial y el Internet de las 
+Cosas \parencite{plummer20242d}.
+
+\section{Bases Teóricas}
+
+La presente investigación se fundamenta
+en un cuerpo teórico interdisciplinario
+que integra la física del magnetismo en sólidos,
+los métodos computacionales de primeros principios
+y las técnicas modernas de aprendizaje profundo.
+Este marco proporciona las herramientas conceptuales y metodológicas
+necesarias para abordar  la caracterización
+de \textbf{fases magnéticas topológicas} en materiales bidimensionales (2D),
+mediante una estrategia multiescala
+que vincula directamente cálculos \textit{ab initio}
+con simulaciones estocásticas y análisis automatizado de datos.
+El magnetismo en materiales sólidos
+posee un origen cuántico,
+intrínsecamente ligado al espín electrónico
+y a las interacciones entre momentos magnéticos localizados.
+Estas interacciones derivan de principios fundamentales
+de la mecánica cuántica,
+como el principio de exclusión de Pauli y la repulsión de Coulomb.
+El \textbf{modelo de Heisenberg} describe eficazmente
+las interacciones de intercambio entre espines localizados,
+empleando un parámetro $J_{ij}$
+que determina el alineamiento paralelo (\textbf{ferromagnetismo})
+o antiparalelo (\textbf{antiferromagnetismo}).
+No obstante, en sistemas sin simetría de inversión
+---como aquellos con dopajes asimétricos o rupturas estructurales---,
+emerge la \textbf{interacción de Dzyaloshinskii-Moriya (DMI)},
+representada por el vector $\vec{D}_{ij}$.
+Esta interacción promueve configuraciones de espín no colineales y quirales,
+esenciales para la formación de skyrmiones.
+Adicionalmente, la \textbf{anisotropía magnetocristalina} ($K$)
+establece una dirección de alineamiento preferente,
+crucial para la estabilización de texturas magnéticas
+frente a fluctuaciones térmicas.
+Para obtener estos parámetros fundamentales con precisión,
+se emplea la \textbf{Teoría del Funcional de la Densidad (DFT)}.
+Este enfoque de primeros principios
+permite calcular propiedades electrónicas y magnéticas
+sin necesidad de parámetros empíricos,
+basándose en los teoremas de Hohenberg-Kohn y Kohn-Sham.
+Para materiales con orbitales parcialmente ocupados,
+como los metales de transición,
+es necesaria la inclusión de la corrección de Hubbard (DFT+U)
+para modelar adecuadamente los efectos de correlación local.
+La extensión \textbf{LSDA (Local Spin Density Approximation)},
+por su parte, permite el tratamiento de sistemas con polarización de espín.
+Los parámetros magnéticos interatómicos esenciales para las simulaciones
+se derivan directamente de los resultados DFT
+utilizando el \textbf{formalismo de Liechtenstein (LKAG)}.
+Este método, basado en funciones de Green,
+calcula rigurosamente las constantes de intercambio $J_{ij}$,
+los vectores DMI $\vec{D}_{ij}$ y los términos de anisotropía $K_i$,
+incorporando explícitamente el acoplamiento espín-órbita.
+De esta manera, se construye un \textbf{Hamiltoniano efectivo de espines clásicos}
+que representa fielmente el comportamiento magnético
+del sistema a escala atómica.
+Este Hamiltoniano constituye la base
+de las \textbf{simulaciones de Monte Carlo} desarrolladas en este trabajo.
+Mediante el algoritmo de Metrópolis
+y técnicas como el recocido simulado,
+se explora el espacio de configuraciones de espín
+bajo diversas condiciones de temperatura y campo magnético.
+Estas simulaciones permiten mapear diagramas de fase $(B,T)$
+y caracterizar la emergencia de texturas topológicas
+(e.g., skyrmiones, merones, bimerones, antiskyrmiones)
+mediante la análisis de sus propiedades magnéticas.
+
+El análisis de los extensos datos generados por estas simulaciones
+exige herramientas avanzadas de clasificación automática.
+Para ello, se implementa un modelo de aprendizaje profundo
+basado en \textbf{Vision Transformers (ViT)}.
+Esta arquitectura utiliza mecanismos de auto-atención
+para capturar relaciones espaciales complejas en datos visuales.
+A diferencia de las redes convolucionales tradicionales,
+los ViT son particularmente eficaces
+en la identificación de patrones topológicos dispersos
+y dependencias globales en las configuraciones de espín.
+El modelo se entrena utilizando imágenes generadas
+a partir de las configuraciones de espín obtenidas en las simulaciones,
+lo que permite la clasificación eficiente y precisa
+de las distintas fases magnéticas.
+En conjunto, el presente estudio se apoya
+en un marco teórico coherente
+que enlaza explícitamente los niveles \textit{ab initio},
+mesoscópico y algorítmico.
+Este enfoque multiescala no solo permite
+comprender los mecanismos fundamentales
+que gobiernan la formación y dinámica
+de texturas magnéticas topológicas,
+sino también acelerar su caracterización
+mediante técnicas de inteligencia artificial,
+contribuyendo así al diseño racional de materiales funcionales
+para aplicaciones espintrónicas avanzadas.
+
+\section{Marco Conceptual}
+
+En el presente trabajo se emplean conceptos especializados provenientes de la física del magnetismo, la simulación computacional y el aprendizaje profundo. A continuación, se precisan los términos fundamentales que guiarán el desarrollo metodológico y analítico de esta investigación.
+
+\subsection*{Parámetro de Intercambio de Heisenberg ($J$)}
+
+El parámetro $J_{ij}$,
+denominado constante o integral de intercambio,
+es indispensable en la física de la materia condensada.
+Cuantifica la intensidad y naturaleza
+de la interacción de intercambio
+entre espines localizados en los sitios $i$ y $j$
+de una red cristalina.
+Este parámetro es clave
+para comprender el comportamiento magnético de los materiales.
+Constituye el núcleo del \textbf{modelo de Heisenberg} \parencite{Blundell2001}.
+
+El signo de $J_{ij}$ es determinante
+para el tipo de orden magnético preferido por el sistema.
+Si $J_{ij} > 0$ (positivo),
+la interacción es \textbf{ferromagnética}.
+El sistema favorece alineamientos paralelos de los espines
+($\vec{S}_i \cdot \vec{S}_j > 0$).
+Esto conduce a una magnetización neta espontánea.
+Para dos electrones en el mismo átomo,
+un $J$ positivo estabiliza el estado triplete.
+Esta observación es consistente con la primera regla de Hund
+y minimiza la repulsión de Coulomb.
+Por otro lado, si $J_{ij} < 0$ (negativo),
+la interacción es \textbf{antiferromagnética}.
+Se promueven configuraciones
+con espines alineados antiparalelamente
+($\vec{S}_i \cdot \vec{S}_j < 0$).
+Esto resulta en una magnetización neta nula o mínima
+a bajas temperaturas.
+Para electrones en átomos vecinos,
+un $J$ negativo favorece los estados singlete.
+Esto permite una deslocalización electrónica,
+lo que reduce su energía cinética.
+
+El origen de $J_{ij}$
+no reside en una interacción dipolo-dipolo magnética.
+Surge de un efecto electrostático puramente cuántico.
+Este efecto se conoce como la \textbf{integral de intercambio}.
+Su base es la superposición de las funciones de onda electrónicas
+y la indistinguibilidad de las partículas.
+Este fenómeno conduce a una reducción
+en la energía potencial (Coulomb) y cinética de los electrones.
+Esto ocurre mediante la formación de orbitales moleculares,
+diferenciados en enlazantes y antienlazantes.Métodos avanzados como 
+la DFT permiten el cálculo de estos valores de $J$ a 
+partir de la estructura electrónica del sistema.
+
+En el contexto de simulaciones,
+como las de Monte Carlo o dinámica molecular,
+$J$ se incorpora directamente
+en el \textbf{Hamiltoniano clásico del modelo de Heisenberg}.
+Su expresión es la siguiente:
+\begin{equation}
+H = - \sum_{\langle ij \rangle} J_{ij} \vec{S}_i \cdot \vec{S}_j
+\end{equation}
+Donde $\vec{S}_i$ representa
+el vector de espín clásico unitario en el sitio $i$.
+La suma $\sum_{\langle ij \rangle}$ se extiende
+sobre pares de sitios vecinos.
+Esto asegura que cada par de interacciones
+se contabilice una única vez.
+
+\subsection*{Interacción de Dzyaloshinskii–Moriya ($D$)}
+
+La \textbf{Interacción de Dzyaloshinskii–Moriya (DMI)}, 
+también conocida como interacción de intercambio anisótropa, 
+se representa mediante el vector $\vec{D}_{ij}$. 
+Esta interacción de intercambio antisimétrica emerge en 
+sistemas donde se combinan el \textbf{acoplamiento espín-órbita} 
+y la \textbf{ausencia de simetría de inversión}. 
+Es importante señalar que el vector $\vec{D}$ se anula cuando 
+el campo cristalino posee simetría de inversión con respecto 
+al centro entre los dos iones magnéticos \parencite{Blundell2001}.
+
+Físicamente, la DMI induce una tendencia de los \textbf{momentos magnéticos localizados} (espines, $\vec{S}_i$ y $\vec{S}_j$) de átomos vecinos a alinearse perpendicularmente entre sí. Este fenómeno se origina debido a que la interacción espín-órbita, que acopla el espín del electrón con su momento orbital, es modificada por un entorno atómico que carece de un centro de simetría. Específicamente, esta interacción anisótropa surge del acoplamiento espín-órbita en uno de los iones magnéticos, lo que genera una interacción de intercambio entre un estado excitado de un ión y el estado fundamental del otro. Cuando los electrones se mueven entre átomos en una estructura asimétrica, experimentan campos eléctricos locales que, a través del acoplamiento espín-órbita, ejercen una fuerza sobre sus espines, forzándolos a adoptar orientaciones no colineales.
+
+Su expresión general en el Hamiltoniano se formula como $- \sum_{\langle ij \rangle} \vec{D}_{ij} \cdot (\vec{S}_i \times \vec{S}_j)$. La forma de esta interacción busca forzar la orientación de los espines $\vec{S}_i$ y $\vec{S}_j$ en ángulos rectos dentro de un plano perpendicular al vector $\vec{D}$, con el objetivo de asegurar una energía negativa.
+
+Esta interacción es fundamental porque favorece configuraciones de espín con quiralidad definida, como los \textbf{skyrmiones} y \textbf{antiskyrmiones}. Un efecto común de la DMI es la ligera rotación o "cantiación" de los espines. En sistemas antiferromagnéticos, la DMI puede generar un pequeño componente ferromagnético de los momentos, perpendicular al eje de espín, un fenómeno conocido como \textbf{ferromagnetismo débil}, observado en materiales como el $\alpha$-Fe$_2$O$_3$, MnCO$_3$ y CoCO$_3$.
+
+La dirección y magnitud del vector $\vec{D}_{ij}$ son intrínsecamente dependientes de la geometría específica del sistema (e.g., la orientación de los enlaces atómicos), así como del tipo de dopaje incorporado (que puede romper la simetría local) y de los efectos relativistas incluidos en los cálculos de la teoría funcional de la densidad (DFT) con acoplamiento espín-órbita. La inclusión de la DMI en el modelo de Monte Carlo es crucial para capturar y simular texturas magnéticas no colineales de naturaleza topológica.
+
+\subsection*{Anisotropía Magnetocristalina ($K$)}
+
+La anisotropía magnetocristalina representa la energía preferencial
+asociada a la orientación del vector de espín con respecto a
+los ejes cristalográficos de la red.
+Este fenómeno confiere a los cristales direcciones magnéticas
+fáciles o difíciles, es decir, ejes a lo largo de los cuales
+la magnetización requiere menos o más energía, respectivamente \parencite{Blundell2001}.
+Matemáticamente, este término se modela comúnmente mediante
+la expresión $- K \sum_i (\vec{S}_i \cdot \hat{n})^2$, donde $\hat{n}$
+denota la dirección del eje de anisotropía preferente.
+Un valor positivo de la constante de anisotropía $K$
+favorece la alineación de los espines perpendicular al plano
+(conocida como anisotropía uniaxial perpendicular),
+mientras que un valor negativo promueve la alineación de los espines
+dentro del plano.
+
+La energía de anisotropía surge fundamentalmente de la interacción
+espín-órbita y del amortiguamiento parcial del momento angular.
+Este parámetro es de vital importancia para determinar la estabilidad
+de las texturas magnéticas frente a la desorientación térmica.
+Las energías de anisotropía suelen situarse en un rango de $10^2$ a $10^7$ J$\cdot$m$^{-3}$,
+lo que se traduce en energías por átomo del orden de $10^{-8}$ a $10^{-3}$ eV.
+La magnitud de la energía de anisotropía es típicamente mayor
+en redes cristalinas de baja simetría y menor en aquellas de alta simetría.
+Por ejemplo, el cobalto hexagonal exhibe una anisotropía magnetocristalina
+significativamente mayor que el hierro o el níquel cúbicos.
+
+El cálculo de la constante $K$ se lleva a cabo a menudo
+a partir de la teoría del funcional de la densidad (DFT),
+mediante la inclusión explícita del acoplamiento espín-órbita.
+En el contexto de las simulaciones de Monte Carlo, $K$ desempeña un papel crucial
+al regular la energía de orientación y condicionar de manera significativa
+la formación de estructuras magnéticas específicas,
+tales como los skyrmiones de tipo Bloch o Néel.
+
+\section*{Hamiltoniano Clásico y Simulación de Monte Carlo}
+
+El estudio de sistemas magnéticos
+mediante la construcción de un \textbf{Hamiltoniano de espines clásico}
+constituye un enfoque fundamental.
+Este Hamiltoniano se deriva a partir de parámetros magnéticos primarios,
+tales como $J_{ij}$ (intercambio), $\vec{D}_{ij}$ (interacción de Dzyaloshinskii-Moriya)
+y $K$ (anisotropía), los cuales son obtenidos
+a partir de cálculos de primeros principios.
+Conocido también como modelo de espín,
+esta formulación representa una simplificación de la energía total
+del sistema magnético.
+En el marco de este modelo, los grados de libertad de espín
+de los electrones son tratados como vectores clásicos $\vec{S}_i$,
+caracterizados por poseer longitud unitaria y ser adimensionales.
+
+La energía total del sistema, a una temperatura finita,
+se expresa formalmente mediante la siguiente ecuación:
+\[
+\mathcal{H} = - \sum_{\langle ij \rangle} J_{ij} \vec{S}_i \cdot \vec{S}_j
+- \sum_{\langle ij \rangle} \vec{D}_{ij} \cdot (\vec{S}_i \times \vec{S}_j)
+- K \sum_i (\vec{S}_i \cdot \hat{n})^2
+- \mu \sum_i \vec{B} \cdot \vec{S}_i.
+\]
+En esta formulación, los tres primeros términos corresponden
+a la energía de intercambio de Heisenberg,
+la energía de Dzyaloshinskii-Moriya,
+y la energía de anisotropía magnetocristalina, respectivamente.
+El término final simboliza la energía de Zeeman,
+que describe la interacción de los espines
+con un campo magnético externo $\vec{B}$.
+
+La exploración de este modelo energético se realiza
+predominantemente mediante \textbf{simulaciones de Monte Carlo-Metrópolis}
+\parencite{LandauBinder_MonteCarlo_2014}.
+Este es un método estocástico que genera múltiples configuraciones de espín
+con una probabilidad directamente proporcional a su peso de Boltzmann.
+El algoritmo de Metropolis implica los siguientes pasos:
+se propone un cambio aleatorio en la configuración del sistema
+(e.g., modificando la orientación de un espín);
+subsiguientemente, se calcula el cambio de energía $\Delta E$
+resultante de esta propuesta.
+La aceptación del nuevo estado se rige por un criterio probabilístico:
+si $\Delta E \le 0$, la nueva configuración es siempre aceptada.
+Por el contrario, si $\Delta E > 0$, la configuración se acepta
+con una probabilidad $P = \exp(-\Delta E / k_B T)$,
+donde $k_B$ es la constante de Boltzmann
+y $T$ es la temperatura del sistema.
+Este criterio asegura que el sistema evolucione hacia el equilibrio térmico,
+facilitando la exploración de diversas temperaturas y propiedades termodinámicas.
+
+Para la búsqueda de estados fundamentales
+o configuraciones de mínima energía global,
+así como la identificación de estados metaestables,
+se emplean técnicas de optimización avanzadas,
+tales como el \textit{simulated annealing} (recocido simulado).
+Inspirado en el proceso metalúrgico de recocido,
+este algoritmo inicia la simulación a una temperatura inicial elevada,
+lo que permite al sistema explorar ampliamente el espacio de configuraciones
+y superar barreras de energía.
+Posteriormente, la temperatura se reduce gradualmente
+siguiendo un \textit{esquema de enfriamiento} predefinido.
+A medida que la temperatura disminuye,
+la probabilidad de aceptar configuraciones con mayor energía
+($\exp(-\Delta E / k_B T)$) decrece.
+Esto restringe al sistema a explorar configuraciones
+de energía progresivamente más bajas,
+convergiendo idealmente hacia el estado fundamental.
+Esta metodología es crucial para la investigación de fenómenos complejos
+como la emergencia y estabilización de skyrmiones y merones,
+al permitir que el sistema se \textit{enfríe} entamente
+en una configuración de baja energía,
+evitando quedar atrapado en mínimos locales.
+
+\subsection*{Transformers y Vision Transformers (ViT)}
+
+El modelo \textbf{Transformer}, introducido por \parencite{Vaswani2017Attention} 
+constituye un hito en el desarrollo de arquitecturas de aprendizaje profundo. 
+Diseñado originalmente para tareas de procesamiento de lenguaje natural, 
+su principal innovación radica en el mecanismo de \textbf{auto-atención} (\textit{self-attention}), 
+el cual permite capturar dependencias de largo alcance entre los elementos de una secuencia sin necesidad de recurrencia ni convoluciones.
+
+Este mecanismo se basa en la construcción de representaciones ponderadas 
+para cada posición de entrada a partir de combinaciones lineales de otras posiciones, 
+ponderadas según su relevancia relativa. Matemáticamente, la atención escalada por producto punto se expresa como:
+
+\[
+Attention(Q, K, V) = softmax\left( \frac{QK^\top}{\sqrt{d_k}} \right) V,
+\]
+
+donde $Q$ son las \textit{consultas} (queries), $K$ las \textit{claves} (keys) y $V$ los \textit{valores} (values), 
+todos ellos obtenidos como proyecciones lineales de la entrada. La constante de escalado $d_k$ 
+corresponde a la dimensión de las claves y se introduce para evitar que productos escalares de gran magnitud 
+generen gradientes pequeños o inestables tras la operación softmax.
+
+Gracias a este mecanismo, el modelo es capaz de aprender a identificar y asignar peso 
+a las relaciones contextuales más relevantes entre las entradas, lo que resulta en una mayor capacidad de representación y generalización. 
+
+La versión adaptada de esta arquitectura para el procesamiento de imágenes es conocida como \textbf{Vision Transformer (ViT)}. A diferencia de las redes neuronales convolucionales (CNNs) tradicionales, que procesan imágenes mediante filtros locales, los ViT abordan la imagen de una manera análoga a cómo los Transformers manejan secuencias de texto. Esto se logra dividiendo la imagen de entrada en una serie de \textbf{pequeños parches de tamaño fijo}, por ejemplo, de $16 \times 16$ píxeles. Cada uno de estos parches se linealiza, convirtiéndose en un vector plano.
+
+Estos vectores linealizados son luego \textbf{proyectados a un espacio latente} de mayor dimensión, lo que les permite ser procesados por los bloques Transformer. Para preservar la información espacial intrínseca de la imagen original, la cual se pierde al linealizar los parches, se añade una \textbf{codificación posicional} a cada vector. Esta codificación, que puede ser aprendida o fija, proporciona al modelo información sobre la ubicación relativa de cada parche dentro de la imagen. La secuencia resultante de vectores (parches linealizados + codificaciones posicionales) se procesa secuencialmente a través de múltiples \textbf{bloques Transformer}. Cada bloque está compuesto por capas de \textbf{atención multi-cabeza} (\textit{multi-head attention}) y redes \textit{feedforward}. La atención multi-cabeza permite al modelo atender a diferentes "subespacios" de la información de entrada de manera paralela, enriqueciendo la capacidad de aprender relaciones complejas.
+
+La principal ventaja de los ViT sobre las CNNs radica en su capacidad para \textbf{aprender dinámicamente qué regiones de la imagen son relevantes y cómo deben ser correlacionadas}, sin la limitación de filtros rígidos que solo capturan patrones locales. Esto los hace excepcionalmente potentes para detectar patrones espaciales complejos y distribuidos, como los que caracterizan a las configuraciones de espín con estructuras topológicas (skyrmiones, merones, etc.), donde las interacciones y formas pueden manifestarse a través de grandes extensiones del sistema.
+
+En el marco de esta investigación, las representaciones 
+bidimensionales de las configuraciones de espín, 
+generadas por las simulaciones de Monte Carlo y los diagramas 
+($B-T$), se tratarán como \textbf{imágenes de entrada} para
+el modelo ViT. Este modelo será entrenado para identificar, 
+clasificar y correlacionar automáticamente diversas fases 
+magnéticas topológicas, incluyendo skyrmiones, merones 
+y estados espirales, basándose en sus patrones morfológicos 
+distintivos. La capacidad del ViT para capturar relaciones 
+a largo alcance y patrones complejos es crucial para 
+diferenciar con precisión estas estructuras magnéticas 
+sutiles, superando las limitaciones del análisis manual 
+de grandes volúmenes de datos.
+
+\section{Justificación de la Investigación}
+
+La presente investigación se justifica por su elevada relevancia científica, tecnológica, 
+institucional y nacional, marcando un hito en el avance del conocimiento 
+fundamental y aplicado en el campo de la espintrónica y la ciencia de materiales. 
+A nivel global, la búsqueda de materiales para dispositivos espintrónicos de nueva generación, 
+como memorias de alta densidad, lógica de bajo consumo energético y nuevos paradigmas 
+de computación, es un área de investigación prioritaria. 
+Los skyrmiones magnéticos, con su estabilidad topológica y tamaño nanométrico, 
+se erigen como candidatos clave en esta revolución tecnológica. 
+Sin embargo, su implementación práctica requiere el descubrimiento y 
+la caracterización detallada de nuevos materiales que los alberguen y 
+que posean propiedades tecnológicamente adecuadas 
+(e.g., estabilidad a temperatura ambiente, manipulabilidad eficiente). 
+Los tri-haluros metálicos de van der Waals (como el MCl$_3$) representan 
+una clase emergente de materiales 2D con propiedades magnéticas excepcionales, 
+prometedores para la formación de skyrmiones pequeños y estables. 
+Este estudio contribuirá a la comprensión fundamental de los mecanismos de formación 
+y control de skyrmiones en tri-haluros MCl$_3$ mediante el 
+dopamiento con impurezas magnéticas. El dopamiento es un método versátil 
+para ajustar propiedades cruciales como la interacción Dzyaloshinskii--Moriya (DMI) 
+y la anisotropía, las cuales influyen directamente en la estabilidad, 
+tamaño y helicidad de los skyrmiones. La posibilidad de controlar la helicidad 
+de los skyrmiones a través de la naturaleza del átomo metálico y el tipo de dopante 
+abre vías para nuevas funcionalidades en dispositivos espintrónicos, 
+abordando una brecha de conocimiento en este campo.
+
+La investigación propuesta es metodológicamente de vanguardia, al integrar y aplicar de 
+manera sinérgica un conjunto de herramientas computacionales avanzadas. 
+Se emplearán simulaciones de 
+Monte Carlo con \textit{Simulated Annealing} para explorar de manera eficiente 
+el complejo paisaje de fases magnéticas y asegurar la identificación de estados 
+fundamentales y metaestables que contengan skyrmiones bajo diversas condiciones 
+de temperatura y campo magnético. Asimismo, 
+se utilizará Inteligencia Artificial con Redes Neuronales Vision Transformer (ViT) 
+para la identificación y clasificación avanzada y eficiente de las 
+texturas de espín topológicas generadas. El uso de transformadores permitirá 
+superar las limitaciones de los métodos de clasificación manual o tradicionales, 
+distinguiendo una mayor variedad y complejidad de fases topológicas, 
+incluidas fases intermedias, antiskyrmiones y merones, de forma automatizada y precisa. 
+Esta integración de IA con métodos físico-computacionales es una contribución 
+metodológica valiosa que acelerará significativamente el proceso de caracterización 
+y descubrimiento de materiales.
+
+
+Además, impulsa la formación de profesionales 
+altamente calificados en simulación computacional avanzada, ciencia de 
+materiales con énfasis en magnetismo topológico e inteligencia artificial, 
+perfiles escasos en el país y de alta demanda, contribuyendo a la construcción 
+de una masa crítica de investigadores. Al generar conocimiento fundamental 
+sobre materiales con propiedades magnéticas avanzadas y desarrollar metodologías 
+innovadoras para su descubrimiento y caracterización, esta tesis contribuye 
+directamente a la capacidad del país para participar en la economía del 
+conocimiento y reducir la dependencia tecnológica. 
+El dominio de estas técnicas es vital para el desarrollo sostenible y competitivo 
+del Perú en áreas estratégicas como la electrónica avanzada, 
+la computación y las energías. Finalmente, el proyecto se enmarca dentro 
+de un esfuerzo multidisciplinario que busca consolidar una red de colaboración 
+científica nacional e internacional, promoviendo el intercambio de conocimientos 
+y la creación de sinergias que beneficien a la comunidad científica peruana. 
+En resumen, esta investigación no solo aborda un problema científico y 
+tecnológico de vanguardia a nivel internacional, sino que también genera un 
+impacto directo y positivo en la capacidad científica de la UNMSM y 
+contribuye al desarrollo de capital humano e infraestructura tecnológica en el Perú, 
+elementos clave para el progreso y la competitividad del país.
+
+\section{Objetivos de la Investigación}
+
+\subsection*{2.7.1 Objetivo General}
+
+
+El objetivo general de la presente tesis es desarrollar y aplicar una 
+metodología computacional avanzada que integre simulaciones de Monte Carlo y 
+técnicas de Inteligencia Artificial (específicamente redes neuronales Vision Transformer), 
+utilizando parámetros magnéticos ($J, D, K$) 
+derivados de cálculos de primeros principios (DFT), con el fin de identificar y clasificar 
+eficientemente fases magnéticas topológicas estables (skyrmiones) 
+en materiales bidimensionales tipo tri-haluros metálicos MCl$_3$ (M = V, Cr). 
+Se buscará, investigar sistemáticamente el impacto del dopaje con 
+impurezas magnéticas (Fe, Mn) en las propiedades de estas texturas 
+(incluyendo su helicidad y número topológico) y su potencial para aplicaciones 
+en espintrónica.
+
+\subsection*{2.7.2 Objetivos Específicos}
+
+Los objetivos específicos de la presente investigación son los siguientes:
+
+\begin{enumerate}
+    \item \textbf{Explorar la formación de fases magnéticas topológicas mediante simulaciones de Monte Carlo basadas en parámetros magnéticos derivados de DFT.} 
+    Para ello, se utilizarán parámetros de intercambio de Heisenberg ($J$), interacción Dzyaloshinskii-Moriya ($D$) y anisotropía magnetocristalina ($K$), 
+    obtenidos a partir de cálculos de la Teoría del Funcional de la Densidad (DFT) para materiales bidimensionales (2D) centrosimétricos, como los compuestos $MX_3$ puros y dopados, 
+    con el fin de construir un Hamiltoniano de espín clásico. 
+    A partir de este modelo, se generará un conjunto de datos representativo de configuraciones de 
+    espines mediante simulaciones Monte Carlo-Metrópolis, abarcando un amplio rango de temperaturas ($T$) y 
+    campos magnéticos ($B$), de modo que se incluyan diversas fases magnéticas, 
+    tales como skyrmiones, antiskyrmiones, bimerones, merones y estados espirales.
+
+    \item \textbf{Implementar una red neuronal Vision Transformer (ViT) para la clasificación automática de fases magnéticas topológicas.} 
+    Se diseñará, entrenará y optimizará una arquitectura de red neuronal basada en Vision Transformers utilizando 
+    como insumo el conjunto de configuraciones de espín generado en el objetivo anterior. 
+    El modelo ViT será capacitado para identificar y clasificar automáticamente los patrones morfológicos asociados a 
+    las distintas fases magnéticas topológicas como skyrmiones, antiskyrmiones, bimerones, entre otros
+    a partir de representaciones bidimensionales de configuraciones de espín.
+
+ \item \textbf{Evaluar el rendimiento del modelo ViT para la clasificación de fases magnéticas topológicas utilizando métricas de clasificación multiclase.} Se evaluará la precisión, robustez y capacidad de generalización del modelo entrenado mediante su aplicación a conjuntos de configuraciones de espín no utilizados durante el entrenamiento, incluyendo aquellos obtenidos de simulaciones de materiales dopados. La validación se realizará empleando métricas clave de clasificación multiclase, tales como la \textbf{Matriz de Confusión}, \textbf{Exactitud (Accuracy)}, \textbf{Precisión (Precision)}, \textbf{Exhaustividad (Recall)} y \textbf{Puntuación F1 (F1-Score)}. Estas últimas tres métricas serán analizadas tanto en sus versiones \textbf{macro-average} como \textbf{weighted-average} para asegurar una evaluación completa que considere tanto el rendimiento general como el desempeño específico en clases potencialmente desbalanceadas.
+
+    \item \textbf{Interpretar las fases magnéticas topológicas clasificadas, correlacionándolas con sus propiedades topológicas y el impacto del dopaje.} Se correlacionarán las clasificaciones proporcionadas por el modelo ViT con propiedades físicas clave, tales como la helicidad de las texturas magnéticas (Bloch o Néel) y el número topológico $Q$. El objetivo es validar la correcta identificación de las fases topológicas y comprender cómo los parámetros $J$, $D$, $K$ ---y, por ende, el dopaje con impurezas magnéticas--- influyen en la estabilidad y las características de los skyrmiones en estos materiales.
+
+  \end{enumerate}
+
+
+
+\section{Hipótesis}
+
+La integración sinérgica de simulaciones de Monte Carlo, 
+que emplean parámetros magnéticos ($J, D, K$) derivados de 
+cálculos de primeros principios (DFT), y redes neuronales 
+Vision Transformer (ViT) para la clasificación automatizada 
+de fases magnéticas, permitirá acelerar significativamente 
+la caracterización de fases topológicas 
+estables, tales como skyrmiones, bimerones y merones, 
+en materiales bidimensionales tipo tri-haluros metálicos 
+MCl$_3$ (M = V, Cr) puros y dopados. 
+Este enfoque optimizará el análisis y la identificación de 
+patrones complejos en las configuraciones de espín generadas a 
+gran escala, superando las limitaciones de tiempo y esfuerzo 
+inherentes a la caracterización manual o menos automatizada.
+
+\chapter{Metodología}
+
+\section{Tipo y diseño de investigación}
+
+La presente investigación se clasifica
+como de tipo \textbf{básica-computacional}.
+El estudio es \textbf{básico} al buscar generar conocimiento fundamental
+sobre la emergencia, estabilidad y manipulación de skyrmiones magnéticos
+en materiales bidimensionales.
+Esto incluye la exploración de los mecanismos
+de la interacción Dzyaloshinskii-Moriya (DMI)
+y el impacto del dopaje en las propiedades de estas fases magnéticas.
+El componente \textbf{computacional}
+se evidencia directamente en la realización
+de \textbf{simulaciones de Monte Carlo}
+y la implementación 
+de la \textbf{red neuronal Vision Transformer (ViT)}
+para la clasificación automática de fases magnéticas topológicas.
+
+
+\subsection{Secuencia de Etapas de la Investigación}
+
+La investigación se estructura
+en las siguientes etapas interconectadas:
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1cm,
+    block/.style={
+        rectangle,
+        draw,
+        text width=10cm, % Ancho fijo para los bloques de texto
+        minimum height=1.2cm, % Altura mínima para los bloques
+        text centered,
+        rounded corners,
+        fill=blue!10
+    },
+    arrow/.style={
+        -Stealth, % Tipo de flecha
+        thick,
+        draw
+    }
+]
+
+% Nodos de las etapas
+\node (etapa1) [block] {Derivación de Parámetros Magnéticos Fundamentales(J, D, K) desde DFT};
+\node (etapa2) [block, below=of etapa1] {Simulaciones de Monte Carlo y Generación de Datos};
+\node (etapa3) [block, below=of etapa2] {Diseño, Implementación y Entrenamiento del Modelo ViT};
+\node (etapa4) [block, below=of etapa3] {Evaluación del Rendimiento del Modelo ViT};
+\node (etapa5) [block, below=of etapa4] {Análisis y Correlación de Fases Magnéticas con Propiedades Físicas};
+
+% Conexiones (flechas) entre las etapas
+\draw [arrow] (etapa1) -- (etapa2);
+\draw [arrow] (etapa2) -- (etapa3);
+\draw [arrow] (etapa3) -- (etapa4);
+\draw [arrow] (etapa4) -- (etapa5);
+
+\end{tikzpicture}
+\end{center}
+
+
+\section{Unidad de Análisis}
+
+Las unidades de análisis de la presente investigación son los 
+\textbf{mmateriales bidimensionales (2D) tri-haluros metálicos (MCl$_3$)}
+y las \textbf{configuraciones de espín resultantes} que estos presentan. 
+El estudio se centra específicamente en monocapas de VCl$_3$ y CrCl$_3$
+tanto en su estado puro como en variantes dopadas con diversas 
+impurezas magnéticas, como Fe, Mn, Cr y V, explorando un rango 
+de concentraciones y posiciones de estos dopantes para comprender 
+su impacto.
+
+
+
+
+\section{Población o Universo de Estudio}
+
+La población o universo de estudio de esta investigación abarca la 
+\textbf{totalidad de materiales bidimensionales (2D) derivados de tri-haluros metálicos (MCl$_3$) 
+y sus configuraciones dopadas que son susceptibles de albergar skyrmiones magnéticos estables}.
+Este universo, de naturaleza \textbf{teórica y computacional}, 
+engloba un vasto conjunto de posibles composiciones y estructuras que, 
+si bien aún no han sido exploradas o sintetizadas experimentalmente, 
+son el foco de esta investigación. Las conclusiones obtenidas a partir 
+de este estudio serán directamente aplicables y válidas para esta clase 
+específica de materiales, proporcionando pautas y criterios esenciales 
+para el diseño y la identificación racional de nuevos compuestos con 
+propiedades magnéticas deseadas, crucial para el avance en el campo
+de las tecnologías espintrónicas.
+
+
+\section{Tamaño de Muestra}
+
+En el contexto de esta investigación de naturaleza
+computacional y teórica, el concepto de
+``tamaño de muestra'' se refiere a la \textbf{cantidad y diversidad
+de los sistemas modelados computacionalmente}
+y a los \textbf{conjuntos de datos generados} que sirven para
+el entrenamiento, validación y prueba de los modelos
+de Inteligencia Artificial.
+
+La muestra en el presente estudio comprenderá:
+
+\begin{itemize}
+    \item Un \textbf{conjunto representativo de configuraciones
+    de materiales MCl$_3$ puros y dopados}. La selección
+    de estas configuraciones se basará en su viabilidad
+    computacional y su capacidad para abarcar una diversidad
+    de propiedades estructurales y magnéticas relevantes.
+    Dichas propiedades serán obtenidas a través de cálculos DFT y el formalismo
+    de Liechtenstein, asegurando un análisis exhaustivo.
+
+    \item \textbf{Conjuntos de datos sintéticos de
+    configuraciones de espín (mapas 2D)}. Estos serán
+    generados mediante simulaciones de Monte Carlo-Metrópolis,
+    abarcando un amplio rango de temperaturas, campos magnéticos
+    y parámetros magnéticos de entrada. La muestra incluirá
+    tanto fases magnéticas topológicas (como skyrmiones y merones)
+    como no topológicas, constituyendo el corpus de datos
+    esencial para el entrenamiento y la validación de la
+    arquitectura Vision Transformer.
+\end{itemize}
+
+El tamaño definitivo de estos conjuntos de datos
+se determinará procurando un \textbf{equilibrio óptimo
+entre la exhaustividad científica y los recursos
+computacionales disponibles}. Esto garantizará la
+representatividad estadística necesaria para la
+confiabilidad y la capacidad de generalización
+de los modelos de Inteligencia Artificial desarrollados.
+
+
+\section{Técnicas de Recolección de Datos}
+
+Las \textbf{técnicas de recolección de datos} en la presente investigación, 
+de naturaleza eminentemente computacional, 
+refieren a los métodos sistemáticos y las herramientas 
+informáticas empleados para la generación, procesamiento 
+y obtención de la información digital indispensable 
+para el análisis y la consecución de los objetivos propuestos.
+
+Inicialmente, se emplearán calculos DFT
+utilizando softwares especializados como \textit{Quantum ESPRESSO} 
+y \textit{SIESTA}, con la consideración de \textit{VASP} 
+para casos de alta demanda computacional. 
+De estos cálculos se derivarán datos fundamentales, 
+incluyendo parámetros estructurales optimizados 
+(constantes de red, posiciones atómicas), 
+energías de formación y cohesivas, así como propiedades 
+electrónicas detalladas, tales como estructuras de bandas 
+y densidades de estados (DOS, PDOS).
+
+Posteriormente, para el \textbf{Cálculo de Interacciones Magnéticas}, 
+se hará uso de códigos especializados que implementan el formalismo de 
+Liechtenstein (por ejemplo, \textit{SPR-KKR} o módulos integrados 
+en otros paquetes DFT). Esta técnica permitirá extraer las magnitudes 
+y características de las interacciones magnéticas interatómicas, 
+específicamente las constantes de intercambio de Heisenberg ($J_{ij}$), 
+los vectores de la interacción Dzyaloshinskii-Moriya ($\mathbf{D}_{ij}$) 
+y los parámetros de anisotropía magnetocristalina ($K$).
+
+Las \textbf{Simulaciones de Monte Carlo-Metrópolis} se llevarán a 
+cabo con software como \textit{VAMPIRE} o herramientas análogas 
+e simulación de modelo de espín atomístico. 
+A través de estas simulaciones, se generarán 
+configuraciones de espín en equilibrio térmico para 
+un amplio rango de temperaturas y campos magnéticos, 
+facilitando la construcción de diagramas de fase magnética ($B$–$T$). 
+Adicionalmente, se obtendrán métricas cuantitativas 
+esenciales para la identificación de fases topológicas, 
+como el número topológico $Q$ y perfiles de magnetización.
+
+La \textbf{Generación de Conjuntos de Datos para Aprendizaje Automático} 
+constituye un paso crítico. Los mapas de espín 
+resultantes de las simulaciones de Monte Carlo serán 
+procesados y empleados como datos de entrada para el 
+entrenamiento de la arquitectura \textit{Vision Transformer} (ViT). 
+Las etiquetas correspondientes a las fases magnéticas, 
+determinadas mediante criterios físicos y topológicos, 
+se utilizarán como los datos de salida para la clasificación.
+
+Finalmente, el \textbf{Análisis de Datos y la Aplicación de Modelos 
+de Inteligencia Artificial} se ejecutarán con el soporte 
+de bibliotecas de programación en Python, tales como 
+\textit{TensorFlow} o \textit{PyTorch} para el desarrollo del ViT, 
+\textit{NumPy} para la manipulación matricial, \textit{Pandas} 
+para la gestión de datos, y \textit{Matplotlib} o \textit{SciPy} 
+para la visualización y el análisis estadístico. Los resultados 
+de estas etapas incluirán predicciones automatizadas de propiedades 
+magnéticas, clasificaciones automáticas de fases magnéticas 
+y análisis de correlaciones entre la composición del material 
+(dopaje) y las propiedades de las texturas de espín topológicas.
+
+
+
+\subsection{Localización}
+
+La presente investigación, de naturaleza eminentemente computacional y teórica, 
+será desarrollada en su totalidad dentro de las instalaciones de 
+la Universidad Nacional Mayor de San Marcos (\textbf{UNMSM}). Específicamente, 
+todas las actividades de generación de datos mediante simulaciones computacionales, 
+así como el procesamiento y análisis subsiguiente de la información, 
+se llevarán a cabo en los equipos de cómputo de alto rendimiento (\textbf{HPC}) 
+del Laboratorio de Modelamiento y Simulación Computacional (\textbf{LMSC}), 
+de la Facultad de Ciencias Físicas, en la ciudad de Lima, Perú.
+
+
+\section{Análisis e Interpretación de la Información}
+
+El análisis y la interpretación de la vasta información generada 
+en esta investigación se abordarán mediante un \textbf{enfoque multi-escalar 
+e integrado}, combinando rigurosamente los principios de la física 
+computacional con técnicas avanzadas de la ciencia de datos.
+
+En primera instancia, se realizará un \textbf{análisis de los datos 
+obtenidos de los Cálculos de Primeros Principios 
+(DFT/DFT+U y Formalismo de Liechtenstein)}. 
+Los datos estructurales, tales como parámetros de red y coordenadas 
+atómicas optimizadas, junto con las energías de formación y cohesivas, 
+serán analizados para evaluar la estabilidad termodinámica y 
+la viabilidad estructural de los sistemas MCl$_3$ puros y dopados. 
+Las estructuras de bandas electrónicas y las densidades de 
+estados (DOS y PDOS) serán interpretadas para comprender 
+las propiedades electrónicas fundamentales, incluyendo el 
+carácter metálico, semiconductor o aislante, y para dilucidar 
+las contribuciones específicas de los orbitales atómicos y 
+los dopantes a la electronicidad del material. Adicionalmente, 
+los parámetros magnéticos fundamentales 
+($J_{ij}$, $\mathbf{D}_{ij}$, $K$) derivados del formalismo 
+de Liechtenstein se analizarán sistemáticamente en 
+función del tipo y la concentración del dopaje, 
+así como de las distancias y geometrías interatómicas. 
+Este análisis permitirá dilucidar las correlaciones entre 
+la composición atómica, la estructura cristalina y 
+la emergencia o modificación de las interacciones 
+magnéticas clave, particularmente la interacción de 
+Dzyaloshinskii-Moriya (DMI) y la anisotropía magnetocristalina.
+
+Posteriormente, se procederá con el 
+\textbf{análisis de los datos provenientes de las Simulaciones de Monte Carlo}. 
+Las configuraciones de espín resultantes de las simulaciones 
+Monte Carlo-Metrópolis serán examinadas tanto visualmente 
+como a través del cálculo de magnitudes físicas pertinentes 
+(e.g., magnetización total, funciones de correlación de espín, helicidad local), 
+para la identificación precisa de las diversas fases magnéticas 
+(ferromagnética, antiferromagnética, espiral, paramagnética, etc.). 
+Se calculará el número topológico ($Q$) de las texturas de espín 
+localizadas para confirmar de manera inequívoca la presencia y 
+la estabilidad de skyrmiones, antiskyrmiones, merones 
+y otras fases topológicas. La construcción y el estudio de 
+los diagramas de fase Campo-Temperatura ($B$–$T$) 
+permitirán mapear las regiones de estabilidad de las distintas 
+fases magnéticas, identificando las condiciones 
+óptimas para la formación y manipulación de texturas 
+de espín topológicas, y se interpretará la influencia del 
+dopaje en la topología y extensión de estas regiones de fase.
+
+En lo que respecta al \textbf{Análisis y Evaluación de 
+Modelos de Inteligencia Artificial}, se evaluará la efectividad 
+de la arquitectura Vision Transformer (ViT) para la clasificación 
+de fases mediante métricas de clasificación como la precisión, 
+el \textbf{recall}, la puntuación $F_1$ y la matriz de confusión. 
+Se analizará la robustez del modelo ante variaciones en las 
+configuraciones de espín y su capacidad de generalización, 
+buscando interpretar cómo el mecanismo de auto-atención del 
+transformador identifica características morfológicas clave 
+de las texturas para lograr una clasificación precisa.
+
+Finalmente, se realizará una \textbf{interpretación integrada 
+y correlación de resultados}. Se establecerán correlaciones 
+exhaustivas entre las propiedades a microescala (derivadas de DFT), 
+las interacciones magnéticas (del formalismo de Liechtenstein), 
+las fases topológicas emergentes (de Monte Carlo) 
+y los resultados obtenidos de los modelos de Inteligencia Artificial. 
+Se interpretará de forma crítica cómo el tipo, 
+concentración y posición de los dopantes influyen en la 
+estabilidad de los skyrmiones, su tamaño nanométrico, 
+su helicidad (Bloch o Néel) y su impacto potencial en 
+fenómenos de transporte, como el efecto Hall topológico. 
+Esta síntesis global de los hallazgos permitirá identificar 
+y proponer materiales MCl$_3$ (puros o dopados) que exhiban 
+características prometedoras para aplicaciones en 
+la próxima generación de dispositivos espintrónicos, 
+proporcionando una base teórica y computacional sólida 
+para guiar futuras investigaciones experimentales.
+
+
+\chapter{Presupuesto}
+
+\begin{table}[H]
+\centering
+\begingroup
+\footnotesize  % Tamaño de letra reducido
+\sloppy
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{6pt}
+% \caption{Presupuesto estimado para el proyecto de investigación}
+\begin{tabularx}{\textwidth}{|X|X|>{\raggedleft\arraybackslash}X|}
+\hline
+\rowcolor[HTML]{E6E6E6}
+\textbf{Rubro} & \textbf{Descripción} & \textbf{Costo (S/.)} \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Incentivo a investigadores}} \\
+\hline
+Docentes investigadores & Incentivo monetario a ser otorgado al docente responsable y docentes miembros del proyecto. & 9,000.00 \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Bienes}} \\
+\hline
+Equipos y bienes duraderos & Adquisición de laptop & 6,619.04 \\
+\hline
+Útiles de oficina y materiales de aseo, limpieza y tocador & Papelería en general, útiles y materiales de oficina & 500.00 \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Servicios}} \\
+\hline
+Asesorías especializadas & Contratación de asesor experto es estadística y desarrollo de modelos de IA & 3,000.00 \\
+\hline
+Servicios de terceros & Alquiler de cluster de computadores para simulaciones y desarrollo de modelos de IA & 13,903.28 \\
+\hline
+Movilidad local & Movilidad local en Lima Metropolitana & 1,056.00 \\
+\hline
+\rowcolor[HTML]{E6E6E6}
+\textbf{Total} & & \textbf{34,078.32} \\
+\hline
+\end{tabularx}
+\label{tab:presupuesto_tesis}
+\endgroup
+\end{table}
+
+
+
+\chapter{Cronograma}
+
+\begin{tabular}{lll}
+\toprule
+Objetivo & Actividad & Semanas \\
+\midrule
+\multirow{5}{*}{Objetivo 1} 
+& Revisión bibliográfica sobre fases magnéticas y métodos de simulación & 8 \\
+& Obtención de parámetros magnéticos (J, D, K) desde DFT & 6 \\
+& Implementación del Hamiltoniano de espín clásico & 4 \\
+& Desarrollo y ejecución de simulaciones de Monte Carlo & 16 \\
+& Visualización y almacenamiento de los datos simulados & 2 \\
+\midrule
+\multirow{3}{*}{Objetivo 2} 
+& Preprocesamiento de datos para entrenamiento & 2 \\
+& Diseño e implementación de la arquitectura Vision Transformer & 2 \\
+& Entrenamiento y ajuste de hiperparámetros del modelo ViT & 6 \\
+\midrule
+\multirow{3}{*}{Objetivo 3} 
+& Evaluación del modelo en el conjunto de prueba & 1 \\
+& Análisis de errores y mejora iterativa del modelo & 3 \\
+& Documentación y visualización de los resultados de clasificación & 3 \\
+\midrule
+\multirow{2}{*}{Objetivo 4} 
+& Análisis de la influencia del dopaje en la formación de los Skyrmiones & 6 \\
+& Redacción de resultados y discusión & 13 \\
+\midrule
+\multicolumn{2}{r}{\textbf{Total}} & \textbf{72} \\
+\bottomrule
+\end{tabular}
+
+
+
+\chapter{Bibliografía}
+\printbibliography[heading=none]
+
+
+\chapter{Anexos}
+
+\end{document}
