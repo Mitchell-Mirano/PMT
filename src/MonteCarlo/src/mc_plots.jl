@@ -1,4 +1,46 @@
 using CairoMakie
+using Printf
+using StaticArrays
+
+
+
+function plot_red(coords::Vector{SVector{3, Float64}})
+    x = [c[1] for c in coords]
+    y = [c[2] for c in coords]
+
+
+    fig = Figure(size = (1600, 900), backgroundcolor = :white)
+
+    ax1 = Axis(
+        fig[1, 1],
+        aspect = DataAspect(),
+        title = "Supercelda con Padding de Red",
+        xgridvisible = true,
+        ygridvisible = true,
+        # Ajuste de márgenes automáticos (proporcional al rango)
+        xautolimitmargin = (0.1, 0.1),
+        yautolimitmargin = (0.1, 0.1)
+    )
+
+    # Visualización
+    scatter!(ax1, x, y, 
+        color = :dodgerblue, 
+        markersize = 15, 
+        strokewidth = 1, 
+        strokecolor = :black
+    )
+
+    labels = ["$i" for i in 1:length(x)]
+    text!(ax1, x, y; 
+        text = labels, 
+        align = (:center, :top), 
+        offset = (0, -12),
+        fontsize = 10
+    )
+
+    return fig
+end
+
 
 function plot_spins(COORDS::Vector{SVector{3, Float64}}, SPINS::Vector{SVector{3, Float64}},H::Float64, D::Float64)
     spin_scale = 2

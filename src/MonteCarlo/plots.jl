@@ -5,13 +5,11 @@ using Printf
 
 include("src/mc_plots.jl")
 include("src/mc_data.jl")
+include("src/mc_params.jl")
 
 
 
 POS = to_svec(readdlm("data/coords.txt", Float64))
-H_range = 0.0:0.1:10.0
-D_range = 0.0:0.1:10.0
-
 
 params = [(H, D) for H in H_range, D in D_range]
 

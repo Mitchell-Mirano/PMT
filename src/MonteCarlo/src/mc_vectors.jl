@@ -1,3 +1,5 @@
+using StaticArrays
+
 function get_DM_vectors(frac_coords::Vector{SVector{3, Float64}}, 
                         neighbors2::SVector{6, Int64}, 
                         superlattice_matrix::SMatrix{3, 3, Float64, 9}, 

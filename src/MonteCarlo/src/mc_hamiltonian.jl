@@ -15,7 +15,9 @@ function Delta_E(sp_i::SVector{3, Float64},
 
     dsp = sp_p - sp_i
     ku = 0.034
-    g_ub = 2 * 0.05788
+    g = 2.0
+    ub = 0.05788
+    g_ub = g * ub
 
     # Heisenberg: Suma componente a componente automática con SVectors
     field_heis = J1 * sum(sp_n1) + J2 * sum(sp_n2) + J3 * sum(sp_n3)
