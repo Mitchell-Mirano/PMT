@@ -42,7 +42,7 @@ function plot_red(coords::Vector{SVector{3, Float64}})
 end
 
 
-function plot_spins(COORDS::Vector{SVector{3, Float64}}, SPINS::Vector{SVector{3, Float64}},H::Float64, D::Float64)
+function plot_spins(COORDS::Vector{SVector{3, Float64}}, SPINS::Vector{SVector{3, Float64}},title::String)
     spin_scale = 2
     # Convertimos a matrices solo para el plot
     P = stack(COORDS)'
@@ -65,6 +65,6 @@ function plot_spins(COORDS::Vector{SVector{3, Float64}}, SPINS::Vector{SVector{3
 
     ax.aspect = DataAspect()
 
-    ax.title = @sprintf("H = %.2f, D = %.2f", H, D)
+    ax.title = title
     return fig
 end

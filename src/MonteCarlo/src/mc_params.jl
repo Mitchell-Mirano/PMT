@@ -28,12 +28,9 @@ const basis_frac = [SVector(0.99993, 0.00006, 0.0),
 # --- Parámetros de simulación ---
 
 Kb = 1
-T_init = 10
-T_final = 0.01
-T_decay = 0.85
-T_steps = Int(round(log(T_final/T_init)/log(T_decay)))
-T_range = [T_init*(T_final/T_init)^(t/T_steps) for t in 0:T_steps]
-B_range = [1/(Kb*T) for T in T_range]
+T_init = 300
+T_steps = 20 
+# T_decay = 0.85#Int(round(log(T_final/T_init)/log(T_decay)))
 
 N_term = 100_000
 N_prod = 100_000
@@ -44,6 +41,8 @@ J1 = 3.5
 J2 = -0.136
 J3 = -0.64
 
+D = 0.33
+
 H_range = range(0.0, 10.0, 10)
 D_range = range(0.0, 1.0, 10)
-T_final_range = range(0.0,100.0,100)
+T_range = range(eps(),100.0,10)
