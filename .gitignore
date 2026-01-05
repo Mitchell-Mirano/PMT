@@ -515,11 +515,5 @@ pyrightconfig.json
 *.png
 *.xlsx
 
-src/MonteCarlo/data
-src/MonteCarlo/results
-
-
-src/SkyrmionClassifier/models
-src/SkyrmionClassifier/DATASET
-src/SkyrmionClassifier/predictions
-src/SkyrmionClassifier/results
+results/
+datasets/
