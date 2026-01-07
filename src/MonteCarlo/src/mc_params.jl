@@ -15,7 +15,8 @@ const v3 = SVector(0.0, 0.0, 1.0)
 const ranges = [
     (0.1, 4.0),
     (4.0, 6.8),
-    (6.8, 7.5)]
+    (6.8, 7.5)
+    ]
 
 # La matriz de supercelda ahora es una SMatrix de 3x3
 const superlattice_matrix = SMatrix{3,3,Float64}(hcat(N * v1, N * v2, v3))
@@ -32,8 +33,8 @@ T_init = 300
 T_steps = 20 
 # T_decay = 0.85#Int(round(log(T_final/T_init)/log(T_decay)))
 
-N_term = 100_000
-N_prod = 100_000
+N_term = 10
+N_prod = 10
 δ_init = 60.0
 
 

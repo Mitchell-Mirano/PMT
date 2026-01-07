@@ -1,29 +1,40 @@
 #!/bin/bash
 
-# Configuración de variables
+# Configuración de variables (Usamos $HOME para rutas absolutas seguras)
 IP_WORKER="192.168.1.47"
-DEST_PATH="~/Desktop/MitchellProjects/TesisMaestria/src/MonteCarlo/"
+USER_WORKER="luz"
 
-# 1. Sincroniza archivos vía rsync (Código y entorno)
+# Rutas en la Maestra (A)
+LOCAL_SRC="$HOME/Desktop/MitchellProjects/TesisMaestria/src/MonteCarlo/"
+LOCAL_RESULTS="$HOME/Desktop/MitchellProjects/TesisMaestria/results/MonteCarlo/"
+
+# Rutas en el Worker (B) - Relativas al Home del usuario 'luz'
+REMOTE_PROJECT="Desktop/MitchellProjects/TesisMaestria/"
+# REMOTE_SRC="Desktop/MitchellProjects/TesisMaestria/src/MonteCarlo/"
+REMOTE_SRC="${REMOTE_PROJECT}src/MonteCarlo/"
+# REMOTE_RESULTS="Desktop/MitchellProjects/TesisMaestria/results/MonteCarlo/"
+REMOTE_RESULTS="${REMOTE_PROJECT}results/MonteCarlo/"
+
+# 1. Sincroniza archivos vía rsync
 echo "------------------------------------------"
-echo "1. Sincronizando archivos con el Worker..."
-rsync -avzP  ./ luz@$IP_WORKER:$DEST_PATH
+echo "1. Sincronizando código con el Worker: ${IP_WORKER}"
+# Creamos la carpeta remota por si no existe antes de enviar
+ssh ${USER_WORKER}@${IP_WORKER} "mkdir -p ${REMOTE_SRC} ${REMOTE_RESULTS}"
 
-# 2. Activar el servidor NFS
-echo "2. Activando servidor NFS (Maestra)..."
-sudo systemctl start nfs-kernel-server
+rsync -az --info=progress2 "${LOCAL_SRC}" ${USER_WORKER}@${IP_WORKER}:${REMOTE_SRC}
 
-# 3. Ejecuta la simulación
-echo "3. Iniciando simulación en Julia..."
 echo "------------------------------------------"
-
-# Usamos un bloque 'trap' para asegurar que el NFS se apague 
-# aunque canceles el script con Ctrl+C o Julia de un error.
-trap 'echo "Apagando NFS..."; sudo systemctl stop nfs-kernel-server; exit' INT TERM EXIT
-
-# Ejecución de Julia
+echo "2. Iniciando simulación en Julia..."
 julia --project=. distributed.jl
 
-# El bloque 'trap' anterior se encargará de ejecutar el stop al finalizar
 echo "------------------------------------------"
-echo "Simulación finalizada. NFS desactivado automáticamente."
+echo "3. Recuperando archivos de resultados..."
+# El / final en la ruta remota copia el contenido, no la carpeta
+rsync -az --info=progress2 ${USER_WORKER}@${IP_WORKER}:${REMOTE_RESULTS}/ "${LOCAL_RESULTS}/"
+
+echo "------------------------------------------"
+echo "4. Eliminando archivos del Worker ${IP_WORKER}..."
+ssh ${USER_WORKER}@${IP_WORKER} "rm -rf ${REMOTE_PROJECT}"
+
+echo "------------------------------------------"
+echo "Proceso finalizado con éxito."
