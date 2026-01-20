@@ -5,16 +5,16 @@ using Distributed
 if nprocs() == 1
     # AGREGAR CORES LOCALES AUTOMÁTICAMENTE
     # Usamos todos los hilos disponibles menos 1 para que la laptop no se congele
-    cores_locales = Sys.CPU_THREADS - 2
+    cores_locales = Sys.CPU_THREADS - 4
     println("Detectados $(Sys.CPU_THREADS) cores locales. Activando $cores_locales...")
     addprocs(cores_locales)
 
     # AGREGAR CORES REMOTOS (Laptop B)
     workers_config = [
         (
-            "luz@192.168.1.47", 
-            "/home/luz/Desktop/MitchellProjects/TesisMaestria/src/MonteCarlo", 
-            "/home/luz/.juliaup/bin/julia"
+            "MITCHELL_OMEN_UBUNTU", 
+            "/home/mitchellmirano/Desktop/MitchellProjects/PMT/src/MonteCarlo", 
+            "/home/mitchellmirano/.juliaup/bin/julia"
         )
     ]
 
@@ -39,7 +39,7 @@ end
     using Random, DelimitedFiles, LinearAlgebra, StaticArrays, CairoMakie, Printf
 
 
-    const project_path = expanduser("~/Desktop/MitchellProjects/TesisMaestria")
+    const project_path = expanduser("~/Desktop/MitchellProjects/PMT")
     const montecarlo_path = joinpath(project_path, "src/MonteCarlo")
     const results_path = joinpath(project_path, "results/MonteCarlo")
 
@@ -81,7 +81,9 @@ end
 
 # 4. Lanzamiento
 params = [(H, T) for H in H_range, T in T_range]
-start_time = time()
+
+
+start_time = time_ns()
 
 println("Lanzando pmap en $(nprocs()) procesos...")
 mensajes = pmap(params) do (H, T)
@@ -89,4 +91,6 @@ mensajes = pmap(params) do (H, T)
 end
 
 foreach(println, mensajes)
-@printf("Tiempo total: %.2f min\n", (time() - start_time) / 60.0)
+
+elapsed_min = (time_ns() - start_time) / 60e9
+@printf("Tiempo total: %.2f min\n", elapsed_min)

@@ -33,8 +33,8 @@ T_init = 300
 T_steps = 20 
 # T_decay = 0.85#Int(round(log(T_final/T_init)/log(T_decay)))
 
-N_term = 10
-N_prod = 10
+N_term = 100_000
+N_prod = 100_000
 δ_init = 60.0
 
 

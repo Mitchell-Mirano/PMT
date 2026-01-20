@@ -8,7 +8,7 @@ using Base.Threads
 
 
 # 1. Usa expanduser para que la ruta sea válida
-const project_path = expanduser("~/Desktop/MitchellProjects/TesisMaestria")
+const project_path = expanduser("~/Desktop/MitchellProjects/PMT")
 const montecarlo_path = joinpath(project_path, "src/MonteCarlo")
 const results_path = joinpath(project_path, "results/MonteCarlo")
 
