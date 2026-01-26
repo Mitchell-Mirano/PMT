@@ -64,7 +64,7 @@ Manifest.toml
 
 ## Build tool auxiliary files:
 *.fdb_latexmk
-*.synctex
+*.synctexF
 *.synctex(busy)
 *.synctex.gz
 *.synctex.gz(busy)
@@ -517,3 +517,4 @@ pyrightconfig.json
 
 results/
 datasets/
+cluster.json

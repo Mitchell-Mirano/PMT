@@ -44,6 +44,7 @@ J3 = -0.64
 
 D = 0.33
 
-H_range = range(0.0, 10.0, 10)
-D_range = range(0.0, 1.0, 10)
-T_range = range(eps(),100.0,10)
+points = 100
+H_range = range(0.0, 10.0, points)
+D_range = range(0.0, 1.0, points)
+T_range = range(eps(),100.0, points)

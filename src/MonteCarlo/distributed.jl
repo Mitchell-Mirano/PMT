@@ -1,4 +1,9 @@
 using Distributed
+using JSON3
+
+
+CONFIG_FILE = "config/cluster.json"
+
 
 
 # 1. Configuración de Workers
@@ -9,21 +14,18 @@ if nprocs() == 1
     println("Detectados $(Sys.CPU_THREADS) cores locales. Activando $cores_locales...")
     addprocs(cores_locales)
 
-    # AGREGAR CORES REMOTOS (Laptop B)
-    workers_config = [
-        (
-            "MITCHELL_OMEN_UBUNTU", 
-            "/home/mitchellmirano/Desktop/MitchellProjects/PMT/src/MonteCarlo", 
-            "/home/mitchellmirano/.juliaup/bin/julia"
-        )
-    ]
 
-    for (maquina, ruta, ejecutable) in workers_config
-        println("Conectando con $maquina...")
-        addprocs([(maquina, :auto)], 
+    cluster_data = open(JSON3.read, CONFIG_FILE)
+    manager_node = cluster_data.manager_node
+    remote_nodes = cluster_data.remote_nodes
+
+
+    for node in remote_nodes
+        println("Conectando con $(node.hostname)...")
+        addprocs([(node.hostname, :auto)], 
                  tunnel=true, 
-                 dir=ruta,
-                 exename=ejecutable,
+                 dir=joinpath(node.project_root, manager_node.source_path),
+                 exename=node.julia_binary,
                  exeflags="--project") 
     end
 end
@@ -38,43 +40,46 @@ end
     
     using Random, DelimitedFiles, LinearAlgebra, StaticArrays, CairoMakie, Printf
 
+    cluster_data = open(JSON3.read, CONFIG_FILE)
+    manager_node = cluster_data.master
 
-    const project_path = expanduser("~/Desktop/MitchellProjects/PMT")
-    const montecarlo_path = joinpath(project_path, "src/MonteCarlo")
-    const results_path = joinpath(project_path, "results/MonteCarlo")
 
-    mkpath(joinpath(results_path, "spins/HvsT"))
-    mkpath(joinpath(results_path, "images/HvsT"))
+    const project_path = joinpath(homedir(),manager_node.project)
+    const code_path = joinpath(project_path, manager_node.source_path)
+    const output_path = joinpath(project_path, manager_node.output_path)
+
+    mkpath(joinpath(output_path, "spins/HvsT"))
+    mkpath(joinpath(output_path, "images/HvsT"))
     
-    include(joinpath(montecarlo_path, "src/mc_spins.jl"))
-    include(joinpath(montecarlo_path, "src/mc_vectors.jl"))
-    include(joinpath(montecarlo_path, "src/mc_hamiltonian.jl"))
-    include(joinpath(montecarlo_path, "src/mc_data.jl"))
-    include(joinpath(montecarlo_path, "src/mc_metropolis.jl"))
-    include(joinpath(montecarlo_path, "src/mc_sim.jl"))
-    include(joinpath(montecarlo_path, "src/mc_plots.jl"))
-    include(joinpath(montecarlo_path, "src/mc_params.jl"))
+    include(joinpath(code_path, "src/mc_spins.jl"))
+    include(joinpath(code_path, "src/mc_vectors.jl"))
+    include(joinpath(code_path, "src/mc_hamiltonian.jl"))
+    include(joinpath(code_path, "src/mc_data.jl"))
+    include(joinpath(code_path, "src/mc_metropolis.jl"))
+    include(joinpath(code_path, "src/mc_sim.jl"))
+    include(joinpath(code_path, "src/mc_plots.jl"))
+    include(joinpath(code_path, "src/mc_params.jl"))
 
     # Lectura de datos usando rutas unidas explícitamente
-    POS = to_svec(readdlm(joinpath(montecarlo_path, "data/coords.txt"), Float64))
-    FRAC_POS = to_svec(readdlm(joinpath(montecarlo_path, "data/frac_coords.txt"), Float64))
-    NN1 = to_svec(readdlm(joinpath(montecarlo_path, "data/neighbors1.txt"), Int))
-    NN2 = to_svec(readdlm(joinpath(montecarlo_path, "data/neighbors2.txt"), Int))
-    NN3 = to_svec(readdlm(joinpath(montecarlo_path, "data/neighbors3.txt"), Int))
+    POS = to_svec(readdlm(joinpath(code_path, "data/coords.txt"), Float64))
+    FRAC_POS = to_svec(readdlm(joinpath(code_path, "data/frac_coords.txt"), Float64))
+    NN1 = to_svec(readdlm(joinpath(code_path, "data/neighbors1.txt"), Int))
+    NN2 = to_svec(readdlm(joinpath(code_path, "data/neighbors2.txt"), Int))
+    NN3 = to_svec(readdlm(joinpath(code_path, "data/neighbors3.txt"), Int))
     
     D_ij = [get_DM_vectors(FRAC_POS, NN2[i], superlattice_matrix, i) for i in 1:length(POS)]
 end
 
 # 3. Función de tarea
-@everywhere function tarea_completa(H, T)
+@everywhere function job(H, T)
     SPINS = [random_unit_vector() for _ in 1:length(POS)]
     B_range = (1/(Kb*(T_init*(T/T_init)^(t/T_steps))) for t in 0:T_steps)
     monte_carlo(SPINS, NN1, NN2, NN3, D_ij, B_range, N_term, N_prod, δ_init, J1, J2, J3, D, H)
     
     title = @sprintf("H = %0.2f, T = %0.2f, D = %0.2f", H, T, D)
-    writedlm(joinpath(results_path, "spins/HvsT/$(title).txt"), SPINS)
+    writedlm(joinpath(output_path, "spins/HvsT/$(title).txt"), SPINS)
     fig = plot_spins(POS, SPINS, title)
-    save(joinpath(results_path, "images/HvsT/$(title).png"), fig)
+    save(joinpath(output_path, "images/HvsT/$(title).png"), fig)
     
     return "Finalizado: $title en el nodo $(myid()) de la máquina $(gethostname())"
 end
@@ -87,7 +92,7 @@ start_time = time_ns()
 
 println("Lanzando pmap en $(nprocs()) procesos...")
 mensajes = pmap(params) do (H, T)
-    tarea_completa(H, T)
+    job(H, T)
 end
 
 foreach(println, mensajes)
