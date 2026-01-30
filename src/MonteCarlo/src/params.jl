@@ -28,23 +28,22 @@ const basis_frac = [SVector(0.99993, 0.00006, 0.0),
 
 # --- Parámetros de simulación ---
 
-Kb = 1
-T_init = 300
-T_steps = 20 
-# T_decay = 0.85#Int(round(log(T_final/T_init)/log(T_decay)))
+Kb::Float64 = 1.0
+T_init::Float64 = 300.0
+T_steps::Int64 = 20 
 
-N_term = 100_000
-N_prod = 100_000
-δ_init = 60.0
+N_term::Int64 = 100_000
+N_prod::Int64 = 100_000
+δ_init::Float64 = 60.0
 
 
-J1 = 3.5  
-J2 = -0.136
-J3 = -0.64
+J1::Float64 = 3.5  
+J2::Float64 = -0.136
+J3::Float64 = -0.64
 
-D = 0.33
+D::Float64 = 0.33
 
-points = 100
-H_range = range(0.0, 10.0, points)
-D_range = range(0.0, 1.0, points)
-T_range = range(eps(),100.0, points)
+points::Int64 = 10
+H_range = collect(LinRange(0.0, 10.0, points))
+D_range = collect(LinRange(0.0, 1.0, points))
+T_range = collect(LinRange(eps(),100.0, points))
